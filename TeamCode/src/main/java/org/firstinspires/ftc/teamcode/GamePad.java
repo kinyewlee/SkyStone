@@ -58,48 +58,74 @@ public class GamePad extends LinearOpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private double maxPower = 1d;
+    ElapsedTime driveTime;
+
+    public GamePad() {
+        driveTime = new ElapsedTime();
+    }
 
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-        AztecRobot myRobot = new AztecRobot();
+        final AztecRobot myRobot = new AztecRobot();
         myRobot.init(hardwareMap);
-
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
+
+        new Thread() {
+            public void run() {
+                while (opModeIsActive()) {
+                    telemetry.addData("Arm:", "pos (%.3f)", myRobot.getArmAngle());
+                    telemetry.addData("Heading: ", "%.4f", myRobot.getHeading());
+                    telemetry.update();
+                }
+            }
+        }.start();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
             // Setup a variable for each drive wheel to save power level for telemetry
             double powerFL = 0d;
-            double powerFR = 0;
-            double powerRR = 0;
-            double powerRL = 0;
+            double powerFR = 0d;
+            double powerRR = 0d;
+            double powerRL = 0d;
+            double drive = 0.2d + (driveTime.milliseconds() / 1200d);
+            double powerToSet = Range.clip(drive, -1d, 1d);
 
             if (gamepad1.dpad_up) {
-                powerFL = powerFR = powerRL = powerRR = maxPower;
+                powerFL = powerFR = powerRL = powerRR = powerToSet;
             } else if (gamepad1.dpad_down) {
-                powerFL = powerFR = powerRL = powerRR = -maxPower;
+                powerFL = powerFR = powerRL = powerRR = -powerToSet;
             } else if (gamepad1.dpad_right) {
-                powerFL = powerRR = maxPower;
-                powerFR = powerRL = -maxPower;
+                powerFL = powerRL = powerToSet;
+                powerFR = powerRR = -powerToSet;
             } else if (gamepad1.dpad_left) {
-                powerFL = powerRR = -maxPower;
-                powerFR = powerRL = maxPower;
-            } else if (gamepad1.left_bumper){
-                powerFL = powerRL = -maxPower;
-                powerFR = powerRR = maxPower;
-            }
-            else if (gamepad1.right_bumper){
-                powerFL =powerRL =maxPower;
-                powerFR =powerRR =-maxPower;
+                powerFL = powerRL = -powerToSet;
+                powerFR = powerRR = powerToSet;
+            } else if (gamepad1.left_bumper) {
+                powerFL = powerRR = -powerToSet;
+                powerFR = powerRL = powerToSet;
+            } else if (gamepad1.right_bumper) {
+                powerFL = powerRR = powerToSet;
+                powerFR = powerRL = -powerToSet;
+            } else {
+                driveTime.reset();
             }
 
-            myRobot.setPower(powerFL, powerFR, powerRL, powerRR);
+            myRobot.setDrivePower(powerFL, powerFR, powerRL, powerRR);
+
+            double powerArm = Range.clip(gamepad1.left_trigger, -1, 0);
+            if (gamepad1.left_trigger > 0d) { //Arm going up
+                powerArm = Range.clip(gamepad1.left_trigger, 0d, 1d);
+            } else if (gamepad1.right_trigger > 0d) { //Arm going down
+                powerArm = -Range.clip(gamepad1.right_trigger, 0d, 1d);
+            }
+
+            myRobot.setArmPower(powerArm);
         }
     }
 }
