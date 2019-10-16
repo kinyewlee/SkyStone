@@ -59,6 +59,8 @@ public class GamePad extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private double maxPower = 1d;
     ElapsedTime driveTime;
+    boolean previousX = false;
+
 
     public GamePad() {
         driveTime = new ElapsedTime();
@@ -66,8 +68,7 @@ public class GamePad extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
+
         final AztecRobot myRobot = new AztecRobot();
         myRobot.init(hardwareMap);
 
@@ -85,6 +86,9 @@ public class GamePad extends LinearOpMode {
             }
         }.start();
 
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
@@ -96,7 +100,15 @@ public class GamePad extends LinearOpMode {
             double drive = 0.2d + (driveTime.milliseconds() / 1200d);
             double powerToSet = Range.clip(drive, -1d, 1d);
 
-            if (gamepad1.dpad_up) {
+            if( gamepad1.dpad_down && gamepad1.left_bumper) {
+                powerFL = powerRR = -powerToSet;
+            } else if( gamepad1.dpad_down && gamepad1.right_bumper) {
+                powerFR = powerRL = -powerToSet;
+            } else if( gamepad1.dpad_up && gamepad1.left_bumper) {
+                powerFR = powerRL = powerToSet;
+            } else if( gamepad1.dpad_up && gamepad1.right_bumper) {
+                powerFL = powerRR = powerToSet;
+            } else if (gamepad1.dpad_up) {
                 powerFL = powerFR = powerRL = powerRR = powerToSet;
             } else if (gamepad1.dpad_down) {
                 powerFL = powerFR = powerRL = powerRR = -powerToSet;
@@ -118,7 +130,7 @@ public class GamePad extends LinearOpMode {
 
             myRobot.setDrivePower(powerFL, powerFR, powerRL, powerRR);
 
-            double powerArm = Range.clip(gamepad1.left_trigger, -1, 0);
+            double powerArm = 0;
             if (gamepad1.left_trigger > 0d) { //Arm going up
                 powerArm = Range.clip(gamepad1.left_trigger, 0d, 1d);
             } else if (gamepad1.right_trigger > 0d) { //Arm going down
@@ -126,6 +138,15 @@ public class GamePad extends LinearOpMode {
             }
 
             myRobot.setArmPower(powerArm);
+            if(gamepad1.x){
+                if(previousX!=gamepad1.x) {
+                    previousX=gamepad1.x;
+                    myRobot.modifyHook();
+                }
+            }else{
+                previousX=gamepad1.x;
+            }
         }
     }
 }
+
