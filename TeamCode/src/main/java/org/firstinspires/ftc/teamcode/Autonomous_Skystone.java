@@ -1,21 +1,18 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaSkyStone;
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 
 import java.util.List;
 
 @Autonomous(name = "Skystone: Test", group = "Skystone")
-public class Autonomous_Skystone extends Autonomous_Base {
+public class Autonomous_Skystone extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     @Override
     public void runOpMode() {
-        robot = new AztecRobot();
+        AztecRobot robot = new AztecRobot();
         robot.init(hardwareMap);
         robot.resetDrive();
 
@@ -23,21 +20,8 @@ public class Autonomous_Skystone extends Autonomous_Base {
             idle();
         }
 
-        initVuforia();
-
-        if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
-            initTfod();
-        } else {
-            telemetry.addData("Sorry!", "This device is not compatible with TFOD");
-        }
-
-        /**
-         * Activate TensorFlow Object Detection before we wait for the start command.
-         * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
-         **/
-        if (tfod != null) {
-            tfod.activate();
-        }
+        RobotDriver robotDriver = new RobotDriver(robot,this);
+        SkystoneDetector skystoneDetector = new SkystoneDetector(this);
 
         // Wait for the game to start (driver presses PLAY)
         // Abort this loop is started or stopped.
@@ -46,18 +30,11 @@ public class Autonomous_Skystone extends Autonomous_Base {
         }
 
         if (opModeIsActive()) {
-            SkystoneDetector skystoneDetector = new SkystoneDetector(tfod);
-            gyroSlide(0.01d, 1000d, skystoneDetector);
+            robotDriver.gyroSlide(0.01d, 1000d, skystoneDetector);
             //gyroDrive(1d, -12d, 0d);
             //gyroSlide(1d, 12d);
-
-            VuforiaSkyStone t = new VuforiaSkyStone();
-
-
         }
 
-        if (tfod != null) {
-            tfod.shutdown();
-        }
+        skystoneDetector.dispose();
     }
 }

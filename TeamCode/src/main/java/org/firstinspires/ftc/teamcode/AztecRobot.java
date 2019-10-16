@@ -10,14 +10,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 class AztecRobot {
     HardwareMap hwMap = null;
@@ -30,7 +27,6 @@ class AztecRobot {
     AnalogInput sensorArm = null;
     BNO055IMU imu;
     Servo servoHook = null;
-    WebcamName webcamName = null;
 
     private static final double COUNTS_PER_MOTOR_REV = 288d;    // eg: Core Hex Motor Encoder
     private static final double DRIVE_GEAR_REDUCTION = 1d;     // This is < 1.0 if geared UP, eg. 26d/10d
@@ -86,11 +82,6 @@ class AztecRobot {
         // and named "imu".
         imu = hwMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
-
-        /*
-         * Retrieve the camera we are to use.
-         */
-        webcamName = hwMap.get(WebcamName.class, "Webcam 1");
 
         hookDown = false;
         beepSoundID = hwMap.appContext.getResources().getIdentifier(sounds[6], "raw", hwMap.appContext.getPackageName());
@@ -156,14 +147,18 @@ class AztecRobot {
         return motorFL.isBusy() && motorFR.isBusy() && motorRL.isBusy() && motorRR.isBusy();
     }
 
+    /**
+     * move main arm
+     * @param powerArm positive power move arm back, negative move arm out
+     */
     void setArmPower(double powerArm) {
-        if (powerArm > 0d && getArmAngle() < ARM_MAX) {
+        if (powerArm > 0d && getArmAngle() < ARM_MAX) { //move arm back
             double gap = Math.abs(ARM_MAX - getArmAngle());
             double error = Range.clip(gap, 0d, 1d);
             double sugestedPower = powerArm * error;
             double finalPower = Math.min(sugestedPower, powerArm);
             motorArm.setPower(finalPower);
-        } else if (powerArm < 0d && getArmAngle() > ARM_MIN) {
+        } else if (powerArm < 0d && getArmAngle() > ARM_MIN) { //move arm out
             double gap = Math.abs(getArmAngle() - ARM_MIN);
             double error = Range.clip(gap, 0d, 1d);
             double sugestedPower = powerArm * error;
@@ -173,7 +168,6 @@ class AztecRobot {
             motorArm.setPower(0d);
         }
     }
-
 
     double getArmAngle() {
         return sensorArm.getVoltage();
