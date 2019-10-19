@@ -36,6 +36,7 @@ public class RobotDriver {
 
     final void gyroSlide(double speed,
                          double distance,
+                         double angle,
                          IObjectDetector robotDriver) {
 
         // Ensure that the opmode is still active
@@ -55,7 +56,28 @@ public class RobotDriver {
                 speedToSet = 0.2d + (driveTime.milliseconds() / 1000d);
                 speedToSet = Range.clip(speedToSet, 0d, 1d);
                 speedToSet = Math.min(speedToSet, speed);
-                robot.setDrivePower(speedToSet, speedToSet, speedToSet, speedToSet);
+
+                // adjust relative speed based on heading error.
+                double error = getError(angle);
+                double steer = getSteer(error, P_DRIVE_COEFF);
+
+                // if driving in reverse, the motor correction also needs to be reversed
+                if (distance < 0)
+                    steer *= -1.0;
+
+                double speedF, speedR;
+
+                speedF = speedToSet - steer;
+                speedR = speedToSet + steer;
+
+                // Normalize speeds if either one exceeds +/- 1.0;
+                double max = Math.max(Math.abs(speedF), Math.abs(speedR));
+                if (max > 1.0) {
+                    speedF /= max;
+                    speedR /= max;
+                }
+
+                robot.setDrivePower(speedF, speedF, speedR, speedR);
                 if (robotDriver.objectDetected()) {
                     break;
                 }
@@ -80,15 +102,16 @@ public class RobotDriver {
             robot.setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // start motion.
-            speed = 0.2d;
-            robot.setDrivePower(speed, speed, speed, speed);
+            double speedToSet = Math.min(0.2d, speed);
+            robot.setDrivePower(speedToSet, speedToSet, speedToSet, speedToSet);
             ElapsedTime driveTime = new ElapsedTime();
 
             // keep looping while we are still active, and BOTH motors are running.
             while (opMode.opModeIsActive() &&
                     robot.isDriveBusy()) {
-                speed = 0.2d + (driveTime.milliseconds() / 1200d);
-                speed = Range.clip(speed, 0d, 1d);
+                speedToSet = 0.2d + (driveTime.milliseconds() / 1000d);
+                speedToSet = Range.clip(speedToSet, 0d, 1d);
+                speedToSet = Math.min(speedToSet, speed);
 
                 // adjust relative speed based on heading error.
                 double error = getError(angle);
@@ -100,8 +123,8 @@ public class RobotDriver {
 
                 double speedFL, speedFR, speedRL, speedRR;
 
-                speedFL = speedRL = speed - steer;
-                speedFR = speedRR = speed + steer;
+                speedFL = speedRL = speedToSet - steer;
+                speedFR = speedRR = speedToSet + steer;
 
                 // Normalize speeds if either one exceeds +/- 1.0;
                 double max = Math.max(Math.abs(speedFL), Math.abs(speedFR));

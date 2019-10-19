@@ -4,33 +4,36 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import java.util.List;
 
 @Autonomous(name = "Skystone: Test", group = "Skystone")
 public class Autonomous_Skystone extends LinearOpMode {
-    private ElapsedTime runtime = new ElapsedTime();
-
     @Override
     public void runOpMode() {
         AztecRobot robot = new AztecRobot();
         robot.init(hardwareMap);
         robot.resetDrive();
 
-        while (!robot.imu.isGyroCalibrated()) {
-            idle();
-        }
-
         RobotDriver robotDriver = new RobotDriver(robot,this);
         SkystoneDetector skystoneDetector = new SkystoneDetector(this);
+
+        telemetry.addData(">", "Press Play to start op mode");
+        Telemetry.Item headingItem = telemetry.addData("Heading: ", "%.4f", robot.getHeading());
+
+        robot.beep();
 
         // Wait for the game to start (driver presses PLAY)
         // Abort this loop is started or stopped.
         while (!(isStarted() || isStopRequested())) {
+            headingItem.setValue("%.4f", robot.getHeading());
+            telemetry.update();
             idle();
         }
 
         if (opModeIsActive()) {
-            robotDriver.gyroSlide(0.01d, 1000d, skystoneDetector);
+            robotDriver.gyroSlide(0.8d, 100d, 0d, skystoneDetector);
             //gyroDrive(1d, -12d, 0d);
             //gyroSlide(1d, 12d);
         }

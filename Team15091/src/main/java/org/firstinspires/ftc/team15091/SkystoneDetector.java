@@ -10,7 +10,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 public class SkystoneDetector implements IObjectDetector {
     private static final String TFOD_MODEL_ASSET = "Skystone.tflite";
@@ -18,13 +22,15 @@ public class SkystoneDetector implements IObjectDetector {
     private static final String LABEL_SECOND_ELEMENT = "Skystone";
     private static final String VUFORIA_KEY =
             "AYuhzJv/////AAABmeg8aNmI7008toUzc6hhMIgtAFhnIF3mx6avMFksv/Jm2qTivu8ialyM7onEEB2F7JVsgl3MXkaV1ZooYDc3fvW6+c3motqWyDpAWC9Z8PJxUHcn+6o+iMkwSyPNYQYQLohALfEcQ0I/HmCxRj7SraSmcssIzSbvdnvMHspynndi47Tg+Ie66vc2EPVhSf9oMOGfIY9KqzhfIfY2QhG58tFYPusqypoqWW6gKBe4NkdcVMIh0HvirCGID/zdeJ9xyp8EoCN3JwR8v9IwGzZHdz0vDVOcnmcJaiYuiAXtpuQklPJGclN93y/W9UBVciFQsxmdcxD4jjsx9XGHANHHCUiyeFs1Y6SI8/0JcDeeMCK9\";";
-    protected VuforiaLocalizer vuforia = null;
+    private VuforiaLocalizer vuforia = null;
     /**
      * {@link #tfod} is the variable we will use to store our instance of the TensorFlow Object
      * Detection engine.
      */
-    protected TFObjectDetector tfod;
-    LinearOpMode opMode;
+    private TFObjectDetector tfod;
+    private LinearOpMode opMode;
+    List<Recognition> skytoneRecognitions;
+    private boolean skytoneDetected = false;
 
     public SkystoneDetector(LinearOpMode opMode) {
         this.opMode = opMode;
@@ -46,17 +52,23 @@ public class SkystoneDetector implements IObjectDetector {
     }
 
     public boolean objectDetected() {
-
         if (tfod != null) {
             // getUpdatedRecognitions() will return null if no new information is available since
             // the last time that call was made.
             List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
             if (updatedRecognitions != null) {
-                return updatedRecognitions.size() > 0;
+                skytoneRecognitions = new ArrayList<>();
+                skytoneDetected = false;
+                for (Recognition recognition : updatedRecognitions) {
+                    if (recognition.getLabel() == LABEL_SECOND_ELEMENT) {
+                        skytoneDetected = true;
+                        skytoneRecognitions.add(recognition);
+                    }
+                }
             }
         }
 
-        return false;
+        return skytoneDetected;
     }
 
     public void dispose() {

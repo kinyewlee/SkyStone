@@ -33,11 +33,6 @@ class AztecRobot {
     private static final double WHEEL_DIAMETER_INCHES = 4d;     // For figuring circumference
     private static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.14159265359d);
-    // List of available sound resources
-    private static final String sounds[] = {"ss_alarm", "ss_bb8_down", "ss_bb8_up", "ss_darth_vader", "ss_fly_by",
-            "ss_mf_fail", "ss_laser", "ss_laser_burst", "ss_light_saber", "ss_light_saber_long", "ss_light_saber_short",
-            "ss_light_speed", "ss_mine", "ss_power_up", "ss_r2d2_up", "ss_roger_roger", "ss_siren", "ss_wookie"};
-
     static final double ARM_MAX = 3d;
     static final double ARM_MIN = 0.5d;
 
@@ -83,8 +78,12 @@ class AztecRobot {
         imu = hwMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
+        while (!imu.isGyroCalibrated()) {
+            Thread.yield();
+        }
+
         hookDown = false;
-        beepSoundID = hwMap.appContext.getResources().getIdentifier(sounds[6], "raw", hwMap.appContext.getPackageName());
+        beepSoundID = hwMap.appContext.getResources().getIdentifier("beep", "raw", hwMap.appContext.getPackageName());
     }
 
     final void beep() {
@@ -95,6 +94,13 @@ class AztecRobot {
         }.start();
     }
 
+    /**
+     * set drive motor power
+     * @param powerFL front left
+     * @param powerFR front right
+     * @param powerRL rear left
+     * @param powerRR rear right
+     */
     void setDrivePower(double powerFL, double powerFR, double powerRL, double powerRR) {
         motorFL.setPower(powerFL);
         motorFR.setPower(powerFR);
