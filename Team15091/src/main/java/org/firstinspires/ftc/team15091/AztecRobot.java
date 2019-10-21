@@ -6,6 +6,7 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
@@ -26,7 +27,8 @@ class AztecRobot {
     DcMotor motorArm = null;
     AnalogInput sensorArm = null;
     BNO055IMU imu;
-    Servo servoHook = null;
+    Servo servoHook = null, servoHand = null, servoWrist = null;
+    DistanceSensor sensorRange = null;
 
     private static final double COUNTS_PER_MOTOR_REV = 288d;    // eg: Core Hex Motor Encoder
     private static final double DRIVE_GEAR_REDUCTION = 1d;     // This is < 1.0 if geared UP, eg. 26d/10d
@@ -37,6 +39,8 @@ class AztecRobot {
     static final double ARM_MIN = 0.5d;
 
     boolean hookDown = false;
+    boolean turnClaw = false;
+    boolean openClaw = false;
     private int beepSoundID;
 
     AztecRobot() {
@@ -53,6 +57,11 @@ class AztecRobot {
         motorArm = hwMap.dcMotor.get("motor_arm");
         sensorArm = hwMap.analogInput.get("sensor_arm");
         servoHook = hwMap.servo.get("servo_hook");
+        servoHand = hwMap.servo.get("servo_hand");
+        servoWrist = hwMap.servo.get("servo_wrist");
+        sensorRange = hwMap.get(DistanceSensor.class, "sensor_range");
+
+        motorArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         motorFL.setDirection(DcMotorSimple.Direction.REVERSE);
         motorRL.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -188,5 +197,17 @@ class AztecRobot {
         hookDown = !hookDown;
         double hookPosition = hookDown ? 1 : 0;
         servoHook.setPosition(hookPosition);
+    }
+
+    void openClaw() {
+        openClaw = !openClaw;
+        double clawPosition = openClaw ? 0.4:0;
+        servoHand.setPosition(clawPosition);
+    }
+
+    void turnClaw(){
+        turnClaw = !turnClaw;
+        double wristPosition = turnClaw ? 1:0;
+        servoWrist.setPosition(wristPosition);
     }
 }

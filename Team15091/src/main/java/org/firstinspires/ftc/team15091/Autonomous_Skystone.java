@@ -16,9 +16,9 @@ public class Autonomous_Skystone extends LinearOpMode {
         robot.init(hardwareMap);
         robot.resetDrive();
 
-        RobotDriver robotDriver = new RobotDriver(robot,this);
+        RobotDriver robotDriver = new RobotDriver(robot, this);
         SkystoneDetector skystoneDetector = new SkystoneDetector(this);
-
+        DistanceDetector distanceDetector = new DistanceDetector(robot.sensorRange, 20);
         telemetry.addData(">", "Press Play to start op mode");
         Telemetry.Item headingItem = telemetry.addData("Heading: ", "%.4f", robot.getHeading());
 
@@ -33,8 +33,8 @@ public class Autonomous_Skystone extends LinearOpMode {
         }
 
         if (opModeIsActive()) {
-            robotDriver.gyroSlide(0.8d, 100d, 0d, skystoneDetector);
-            //gyroDrive(1d, -12d, 0d);
+            //robotDriver.gyroSlide(0.8d, 100d, 0d, skystoneDetector);
+            robotDriver.gyroDrive(1d, 100d, 0d, distanceDetector);
             //gyroSlide(1d, 12d);
         }
 

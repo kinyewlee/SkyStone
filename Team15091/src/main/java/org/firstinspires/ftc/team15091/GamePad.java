@@ -58,6 +58,8 @@ public class GamePad extends LinearOpMode {
     private double maxPower = 1d;
     ElapsedTime driveTime;
     boolean previousX = false;
+    boolean previousY = false;
+    boolean previousB = false;
 
 
     public GamePad() {
@@ -98,13 +100,13 @@ public class GamePad extends LinearOpMode {
             double drive = 0.2d + (driveTime.milliseconds() / 1200d);
             double powerToSet = Range.clip(drive, -1d, 1d);
 
-            if( gamepad1.dpad_down && gamepad1.left_bumper) {
+            if (gamepad1.dpad_down && gamepad1.left_bumper) {
                 powerFL = powerRR = -powerToSet;
-            } else if( gamepad1.dpad_down && gamepad1.right_bumper) {
+            } else if (gamepad1.dpad_down && gamepad1.right_bumper) {
                 powerFR = powerRL = -powerToSet;
-            } else if( gamepad1.dpad_up && gamepad1.left_bumper) {
+            } else if (gamepad1.dpad_up && gamepad1.left_bumper) {
                 powerFR = powerRL = powerToSet;
-            } else if( gamepad1.dpad_up && gamepad1.right_bumper) {
+            } else if (gamepad1.dpad_up && gamepad1.right_bumper) {
                 powerFL = powerRR = powerToSet;
             } else if (gamepad1.dpad_up) {
                 powerFL = powerFR = powerRL = powerRR = powerToSet;
@@ -136,15 +138,36 @@ public class GamePad extends LinearOpMode {
             }
 
             myRobot.setArmPower(powerArm);
-            if(gamepad1.x){
-                if(previousX!=gamepad1.x) {
-                    previousX=gamepad1.x;
+            if (gamepad1.x) {
+                if (previousX != gamepad1.x) {
+                    previousX = gamepad1.x;
                     myRobot.modifyHook();
                 }
-            }else{
-                previousX=gamepad1.x;
+            } else {
+                previousX = gamepad1.x;
+            }
+
+
+            if (gamepad1.b) {
+                if (previousB != true) {
+                    previousB = true;
+                    myRobot.openClaw();
+                }
+            } else {
+                previousB = false;
+            }
+
+            if (gamepad1.y) {
+                if (previousY != true) {
+                    previousY = true;
+                    myRobot.turnClaw();
+                }
+
+            } else {
+                previousY = false;
             }
         }
+
     }
 }
 

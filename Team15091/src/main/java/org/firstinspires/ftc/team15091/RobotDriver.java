@@ -37,7 +37,7 @@ public class RobotDriver {
     final void gyroSlide(double speed,
                          double distance,
                          double angle,
-                         IObjectDetector robotDriver) {
+                         IObjectDetector objectDetector) {
 
         // Ensure that the opmode is still active
         if (opMode.opModeIsActive()) {
@@ -78,7 +78,7 @@ public class RobotDriver {
                 }
 
                 robot.setDrivePower(speedF, speedF, speedR, speedR);
-                if (robotDriver.objectDetected()) {
+                if (objectDetector.objectDetected()) {
                     break;
                 }
             }
@@ -93,7 +93,7 @@ public class RobotDriver {
 
     final void gyroDrive(double speed,
                          double distance,
-                         double angle) {
+                         double angle, IObjectDetector objectDetector) {
 
         // Ensure that the opmode is still active
         if (opMode.opModeIsActive()) {
@@ -134,7 +134,9 @@ public class RobotDriver {
                     speedFR /= max;
                     speedRR /= max;
                 }
-
+                if (objectDetector.objectDetected()) {
+                    break;
+                }
                 robot.setDrivePower(speedFL, speedFR, speedRL, speedRR);
             }
 
