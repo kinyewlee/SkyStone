@@ -29,11 +29,9 @@
 
 package org.firstinspires.ftc.team15091;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 
 /**
@@ -84,9 +82,10 @@ public class GamePad extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            gamePadHelper1.processDpad();
+            gamePadHelper1.processJoystick();
             gamePadHelper1.processLeftTrigger();
             gamePadHelper1.processXYAB();
+            gamePadHelper1.processWinch();
 
             gamePadHelper2.processDpad();
         }

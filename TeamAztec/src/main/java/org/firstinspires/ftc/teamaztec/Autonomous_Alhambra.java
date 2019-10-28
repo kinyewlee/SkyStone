@@ -459,8 +459,10 @@ public abstract class Autonomous_Alhambra extends LinearOpMode {
                 armPower = -Range.clip(gamepad2.right_trigger, 0d, 1d);
             } else if (gamepad1.left_trigger > 0d) { //Arm going up
                 armPower = Range.clip(gamepad1.left_trigger, 0d, 1d);
+                armPosition = Range.scale(robot.armAngle.getVoltage(), 1.6d, 0.9d, 0.55d, 0.15d);
             } else if (gamepad1.right_trigger > 0d) { //Arm going down
                 armPower = -Range.clip(gamepad1.right_trigger, 0d, 1d);
+                armPosition = Range.scale(robot.armAngle.getVoltage(), 1.6d, 0.9d, 0.55d, 0.15d);
             }
         }
 

@@ -25,6 +25,7 @@ class AztecRobot {
     DcMotor motorFR = null;
     DcMotor motorRR = null;
     DcMotor motorArm = null;
+    DcMotor motorWinch = null;
     AnalogInput sensorArm = null;
     BNO055IMU imu;
     Servo servoHook = null, servoHand = null, servoWrist = null;
@@ -35,7 +36,7 @@ class AztecRobot {
     private static final double WHEEL_DIAMETER_INCHES = 4d;     // For figuring circumference
     private static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.14159265359d);
-    static final double ARM_MAX = 3d;
+    static final double ARM_MAX = 2.8d;
     static final double ARM_MIN = 0.5d;
 
     boolean hookDown = false;
@@ -52,9 +53,10 @@ class AztecRobot {
         hwMap = ahwMap;
         motorFL = hwMap.dcMotor.get("motor_0");
         motorRL = hwMap.dcMotor.get("motor_1");
-        motorFR = hwMap.dcMotor.get("motor_3");
-        motorRR = hwMap.dcMotor.get("motor_2");
+        motorFR = hwMap.dcMotor.get("motor_2");
+        motorRR = hwMap.dcMotor.get("motor_3");
         motorArm = hwMap.dcMotor.get("motor_arm");
+        motorWinch = hwMap.dcMotor.get("motor_winch");
         sensorArm = hwMap.analogInput.get("sensor_arm");
         servoHook = hwMap.servo.get("servo_hook");
         servoHand = hwMap.servo.get("servo_hand");
@@ -63,10 +65,14 @@ class AztecRobot {
 
         motorArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        motorFL.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFL.setDirection(DcMotorSimple.Direction.FORWARD);
         motorRL.setDirection(DcMotorSimple.Direction.FORWARD);
         motorFR.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorRR.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorRR.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        motorWinch.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorWinch.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorWinch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         setDrivePower(0, 0, 0, 0);
 
@@ -105,12 +111,13 @@ class AztecRobot {
 
     /**
      * set drive motor power
+     *
      * @param powerFL front left
      * @param powerFR front right
      * @param powerRL rear left
      * @param powerRR rear right
      */
-    void setDrivePower(double powerFL, double powerFR, double powerRL, double powerRR) {
+    public void setDrivePower(double powerFL, double powerFR, double powerRL, double powerRR) {
         motorFL.setPower(powerFL);
         motorFR.setPower(powerFR);
         motorRL.setPower(powerRL);
@@ -151,7 +158,7 @@ class AztecRobot {
         setDriveZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    void setDriveZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
+    public void setDriveZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
         motorFL.setZeroPowerBehavior(zeroPowerBehavior);
         motorFR.setZeroPowerBehavior(zeroPowerBehavior);
         motorRL.setZeroPowerBehavior(zeroPowerBehavior);
@@ -164,20 +171,22 @@ class AztecRobot {
 
     /**
      * move main arm
+     *
      * @param powerArm positive power move arm back, negative move arm out
      */
     void setArmPower(double powerArm) {
-        if (powerArm > 0d && getArmAngle() < ARM_MAX) { //move arm back
-            double gap = Math.abs(ARM_MAX - getArmAngle());
-            double error = Range.clip(gap, 0d, 1d);
-            double sugestedPower = powerArm * error;
-            double finalPower = Math.min(sugestedPower, powerArm);
+        double currentAngle = getArmAngle();
+        if (powerArm > 0d && currentAngle < ARM_MAX) { //move arm back
+            double gap = Math.abs(ARM_MAX - currentAngle);
+            double error = Range.scale(gap, 0d, 2d, 0d, 1d);
+            double suggestedPower = powerArm * error;
+            double finalPower = Math.min(suggestedPower, powerArm);
             motorArm.setPower(finalPower);
-        } else if (powerArm < 0d && getArmAngle() > ARM_MIN) { //move arm out
-            double gap = Math.abs(getArmAngle() - ARM_MIN);
+        } else if (powerArm < 0d && currentAngle > ARM_MIN) { //move arm out
+            double gap = Math.abs(currentAngle - ARM_MIN);
             double error = Range.clip(gap, 0d, 1d);
-            double sugestedPower = powerArm * error;
-            double finalPower = Math.max(sugestedPower, powerArm);
+            double suggestedPower = powerArm * error;
+            double finalPower = Math.max(suggestedPower, powerArm);
             motorArm.setPower(finalPower);
         } else {
             motorArm.setPower(0d);
@@ -201,13 +210,13 @@ class AztecRobot {
 
     void openClaw() {
         openClaw = !openClaw;
-        double clawPosition = openClaw ? 0.4:0;
+        double clawPosition = openClaw ? 0.4 : 0;
         servoHand.setPosition(clawPosition);
     }
 
-    void turnClaw(){
+    void turnClaw() {
         turnClaw = !turnClaw;
-        double wristPosition = turnClaw ? 1:0;
+        double wristPosition = turnClaw ? 1 : 0;
         servoWrist.setPosition(wristPosition);
     }
 }
