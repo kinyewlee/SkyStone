@@ -36,8 +36,10 @@ class AztecRobot {
     private static final double WHEEL_DIAMETER_INCHES = 4d;     // For figuring circumference
     private static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.14159265359d);
-    static final double ARM_MAX = 2.8d;
-    static final double ARM_MIN = 0.5d;
+    static final double ARM_MAX = 2.95d;
+    static final double ARM_MIN = 0.45d;
+    static final int WINCH_MAX = 5000;
+    static final double WINCH_SPEED = 0.8d;
 
     boolean hookDown = false;
     boolean turnClaw = false;
@@ -178,7 +180,7 @@ class AztecRobot {
         double currentAngle = getArmAngle();
         if (powerArm > 0d && currentAngle < ARM_MAX) { //move arm back
             double gap = Math.abs(ARM_MAX - currentAngle);
-            double error = Range.scale(gap, 0d, 2d, 0d, 1d);
+            double error = Range.scale(gap, 0d, 1.9d, 0d, 1d);
             double suggestedPower = powerArm * error;
             double finalPower = Math.min(suggestedPower, powerArm);
             motorArm.setPower(finalPower);
@@ -200,6 +202,22 @@ class AztecRobot {
     double getHeading() {
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         return (double) AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle);
+    }
+
+    void winchUp() {
+        motorWinch.setTargetPosition(WINCH_MAX);
+        motorWinch.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorWinch.setPower(WINCH_SPEED);
+    }
+
+    void winchDown() {
+        motorWinch.setTargetPosition(0);
+        motorWinch.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorWinch.setPower(WINCH_SPEED);
+    }
+
+    void winchStop() {
+        motorWinch.setPower(0d);
     }
 
     void modifyHook() {

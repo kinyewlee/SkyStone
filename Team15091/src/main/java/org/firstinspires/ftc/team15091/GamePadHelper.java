@@ -19,15 +19,11 @@ public class GamePadHelper {
 
     void processWinch() {
         if (gamepad.dpad_up) {
-            robot.motorWinch.setTargetPosition(4000);
-            robot.motorWinch.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.motorWinch.setPower(.6d);
+            robot.winchUp();
         } else if (gamepad.dpad_down) {
-            robot.motorWinch.setTargetPosition(0);
-            robot.motorWinch.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.motorWinch.setPower(.6d);
+            robot.winchDown();
         } else {
-            robot.motorWinch.setPower(0d);
+            robot.winchStop();
         }
     }
 
