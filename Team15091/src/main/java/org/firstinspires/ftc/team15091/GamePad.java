@@ -32,6 +32,7 @@ package org.firstinspires.ftc.team15091;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 
 /**
@@ -74,8 +75,8 @@ public class GamePad extends LinearOpMode {
             }
         }.start();
 
-        GamePadHelper gamePadHelper1 = new GamePadHelper(gamepad1, myRobot);
-        GamePadHelper gamePadHelper2 = new GamePadHelper(gamepad2, myRobot);
+        GamePadHelper gamePadHelper1 = new GamePadHelper(gamepad1, myRobot, GamePadOrientation.FORWARD);
+        GamePadHelper gamePadHelper2 = new GamePadHelper(gamepad2, myRobot, GamePadOrientation.REVERSE);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -83,11 +84,31 @@ public class GamePad extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             gamePadHelper1.processJoystick();
-            gamePadHelper1.processLeftTrigger();
             gamePadHelper1.processXYAB();
-            gamePadHelper1.processWinch();
 
-            gamePadHelper2.processDpad();
+            //gamePadHelper2.processDpad();
+            gamePadHelper2.processJoystick();
+            gamePadHelper2.processXYAB();
+
+            double powerArm = 0;
+            if (gamepad1.left_trigger > 0d) { //Arm going up
+                powerArm = Range.clip(gamepad1.left_trigger, 0d, 1d);
+            } else if (gamepad1.right_trigger > 0d) { //Arm going down
+                powerArm = -Range.clip(gamepad1.right_trigger, 0d, 1d);
+            } else if (gamepad2.left_trigger > 0d) { //Arm going up
+                powerArm = Range.clip(gamepad2.left_trigger, 0d, 1d);
+            } else if (gamepad2.right_trigger > 0d) { //Arm going down
+                powerArm = -Range.clip(gamepad2.right_trigger, 0d, 1d);
+            }
+            myRobot.setArmPower(powerArm);
+
+            if (gamepad1.dpad_up || gamepad2.dpad_up) {
+                myRobot.winchUp();
+            } else if (gamepad1.dpad_down || gamepad2.dpad_down) {
+                myRobot.winchDown();
+            } else {
+                myRobot.winchStop();
+            }
         }
     }
 }

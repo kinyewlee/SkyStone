@@ -10,21 +10,13 @@ public class GamePadHelper {
     private Gamepad gamepad;
     private AztecRobot robot;
     private boolean xPressed = false, yPressed = false, aPressed = false, bPressed = false;
+    private GamePadOrientation gamePadOrientation;
 
-    public GamePadHelper(Gamepad gamepad, AztecRobot aztecRobot) {
+    public GamePadHelper(Gamepad gamepad, AztecRobot aztecRobot, GamePadOrientation gamePadOrientation) {
         this.gamepad = gamepad;
         driveTime = new ElapsedTime();
         robot = aztecRobot;
-    }
-
-    void processWinch() {
-        if (gamepad.dpad_up) {
-            robot.winchUp();
-        } else if (gamepad.dpad_down) {
-            robot.winchDown();
-        } else {
-            robot.winchStop();
-        }
+        this.gamePadOrientation = gamePadOrientation;
     }
 
     void processJoystick() {
@@ -40,6 +32,11 @@ public class GamePadHelper {
         double drive = Range.clip(-gamepad.left_stick_y - gamepad.right_stick_y, -0.9d, 0.9d);
         double turn = gamepad.left_stick_x;
         double side = gamepad.right_stick_x;
+
+        if (gamePadOrientation == GamePadOrientation.REVERSE) {
+            drive *= -1d;
+            side *= -1d;
+        }
 
         powerFL = Range.clip(drive + turn + side, -1.0, 1.0);
         powerRL = Range.clip(drive + turn - side, -1.0, 1.0);
@@ -88,17 +85,6 @@ public class GamePadHelper {
         }
 
         robot.setDrivePower(powerFL, powerFR, powerRL, powerRR);
-    }
-
-    void processLeftTrigger() {
-        double powerArm = 0;
-        if (gamepad.left_trigger > 0d) { //Arm going up
-            powerArm = Range.clip(gamepad.left_trigger, 0d, 1d);
-        } else if (gamepad.right_trigger > 0d) { //Arm going down
-            powerArm = -Range.clip(gamepad.right_trigger, 0d, 1d);
-        }
-
-        robot.setArmPower(powerArm);
     }
 
     void processXYAB() {
