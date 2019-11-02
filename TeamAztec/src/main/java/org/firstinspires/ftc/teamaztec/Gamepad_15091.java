@@ -52,7 +52,7 @@ import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name = "Gamepad", group = "Linear Opmode")
 @Disabled
-public class Gamepad extends LinearOpMode {
+public class Gamepad_15091 extends LinearOpMode {
 
     private final double SERVO_CYCLE = 50d;
     private final double SERVO_INCREMENT_MIN = 0.005d;

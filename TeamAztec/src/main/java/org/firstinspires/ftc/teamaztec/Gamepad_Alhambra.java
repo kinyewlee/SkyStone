@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamaztec;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -52,7 +53,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 @TeleOp(name = "Gamepad", group = "Linear Opmode")
-//@Disabled
+@Disabled
 public class Gamepad_Alhambra extends Autonomous_Alhambra {
 
     @Override
