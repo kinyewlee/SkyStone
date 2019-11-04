@@ -25,8 +25,8 @@ public class DistanceDetector implements IObjectDetector {
         boolean detected = false;
 
         if (currentDistance < threshold) {
-            //if the detection last for 100 millisesoncds then sounds like real
-            if (runtime.milliseconds() > 80d) {
+            //if the detection last for 90 millisesoncds then sounds like real
+            if (runtime.milliseconds() > 90d) {
                 detected = true;
             }
         }
