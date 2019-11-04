@@ -203,4 +203,48 @@ public class RobotDriver {
     private double getSteer(double error, double PCoeff) {
         return Range.clip(error * PCoeff, -1d, 1d);
     }
+
+    void moveArm(double armAngle, double timeoutS) {
+        double currentAngle = robot.getArmAngle();
+        runtime.reset();
+        if (currentAngle < armAngle) {
+            robot.setArmPower(1d);
+            while (opMode.opModeIsActive() &&
+                    runtime.seconds() < timeoutS &&
+                    currentAngle < armAngle) {
+                currentAngle = robot.getArmAngle();
+                double gap = Math.abs(armAngle - currentAngle);
+                double suggestedPower = Range.scale(gap, 0d, (armAngle - 1d), 0d, 1d);
+                robot.setArmPower(suggestedPower);
+            }
+        } else if (currentAngle > armAngle) {
+            robot.setArmPower(-1d);
+            while (opMode.opModeIsActive() &&
+                    runtime.seconds() < timeoutS &&
+                    currentAngle > armAngle) {
+                currentAngle = robot.getArmAngle();
+                double gap = Math.abs(currentAngle - armAngle);
+                double suggestedPower = -Range.clip(gap, 0d, 1d);
+                robot.setArmPower(suggestedPower);
+            }
+        }
+        robot.setArmPower(0d);
+    }
+
+    void setClaw(ClawPosition clawPosition) {
+        switch (clawPosition) {
+            case CLOSED:
+                robot.openClaw(false);
+                break;
+            case SIDE:
+                robot.turnClaw(false);
+                break;
+            case FRONT:
+                robot.turnClaw(true);
+                break;
+            case OPENED:
+                robot.openClaw(true);
+                break;
+        }
+    }
 }

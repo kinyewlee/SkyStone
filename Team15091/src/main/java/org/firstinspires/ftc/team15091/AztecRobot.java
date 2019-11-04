@@ -239,15 +239,23 @@ class AztecRobot {
         servoHook.setPosition(hookPosition);
     }
 
+    void openClaw(boolean open) {
+        double clawPosition = open ? 0.4d : 0d;
+        servoHand.setPosition(clawPosition);
+    }
+
     void openClaw() {
         openClaw = !openClaw;
-        double clawPosition = openClaw ? 0.4d : 0d;
-        servoHand.setPosition(clawPosition);
+        openClaw(openClaw);
+    }
+
+    void turnClaw(boolean side) {
+        double wristPosition = side ? 1d : 0d;
+        servoWrist.setPosition(wristPosition);
     }
 
     void turnClaw() {
         turnClaw = !turnClaw;
-        double wristPosition = turnClaw ? 1d : 0d;
-        servoWrist.setPosition(wristPosition);
+        turnClaw(turnClaw);
     }
 }
