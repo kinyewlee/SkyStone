@@ -16,8 +16,9 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 public class RobotDriver {
     private static final double P_TURN_COEFF = 0.09d;     // Larger is more responsive, but also less stable
     private static final double HEADING_THRESHOLD = 1d;      // As tight as we can make it with an integer gyro
-    private static final double P_DRIVE_COEFF = 0.16d;     // Larger is more responsive, but also less stable
+    private static final double P_DRIVE_COEFF = 0.1d;     // Larger is more responsive, but also less stable
     private AztecRobot robot;
+    private ElapsedTime runtime = new ElapsedTime();
     LinearOpMode opMode;
 
     public RobotDriver(AztecRobot arobot, LinearOpMode opMode) {
@@ -25,18 +26,33 @@ public class RobotDriver {
         this.opMode = opMode;
     }
 
-    final void gyroTurn(double speed, double angle) {
+    public final void setHook(HookPosition hookPosition) {
+        boolean hookDown = hookPosition == HookPosition.DOWN ? true : false;
+        robot.modifyHook(hookDown);
+    }
 
+    /**
+     * Turn robot
+     *
+     * @param speed
+     * @param angle
+     */
+    final void gyroTurn(double speed, double angle, double timeoutS) {
+
+        runtime.reset();
         // keep looping while we are still active, and not on heading.
-        while (opMode.opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF)) {
+        while (opMode.opModeIsActive() &&
+                runtime.seconds() < timeoutS &&
+                !onHeading(speed, angle, P_TURN_COEFF)) {
             // Update telemetry & Allow time for other processes to run.
-            opMode.idle();
+
         }
     }
 
     final void gyroSlide(double speed,
                          double distance,
                          double angle,
+                         double timeoutS,
                          IObjectDetector objectDetector) {
 
         // Ensure that the opmode is still active
@@ -46,20 +62,18 @@ public class RobotDriver {
             robot.setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // start motion.
-            double speedToSet = Math.min(0.2d, speed);
-            robot.setDrivePower(speedToSet, speedToSet, speedToSet, speedToSet);
+            runtime.reset();
+            robot.setDrivePower(speed, speed, speed, speed);
             ElapsedTime driveTime = new ElapsedTime();
 
             // keep looping while we are still active, and BOTH motors are running.
             while (opMode.opModeIsActive() &&
+                    runtime.seconds() < timeoutS &&
                     robot.isDriveBusy()) {
-                speedToSet = 0.2d + (driveTime.milliseconds() / 1000d);
-                speedToSet = Range.clip(speedToSet, 0d, 1d);
-                speedToSet = Math.min(speedToSet, speed);
 
                 // adjust relative speed based on heading error.
                 double error = getError(angle);
-                double steer = getSteer(error, P_DRIVE_COEFF);
+                double steer = getSteer(error, P_TURN_COEFF);
 
                 // if driving in reverse, the motor correction also needs to be reversed
                 if (distance < 0)
@@ -67,8 +81,8 @@ public class RobotDriver {
 
                 double speedF, speedR;
 
-                speedF = speedToSet - steer;
-                speedR = speedToSet + steer;
+                speedF = speed + steer;
+                speedR = speed - steer;
 
                 // Normalize speeds if either one exceeds +/- 1.0;
                 double max = Math.max(Math.abs(speedF), Math.abs(speedR));
@@ -78,7 +92,7 @@ public class RobotDriver {
                 }
 
                 robot.setDrivePower(speedF, speedF, speedR, speedR);
-                if (objectDetector.objectDetected()) {
+                if (objectDetector != null && objectDetector.objectDetected()) {
                     break;
                 }
             }
@@ -91,50 +105,51 @@ public class RobotDriver {
         }
     }
 
-    final void gyroDrive(double speed,
-                         double distance,
-                         double angle, IObjectDetector objectDetector) {
+    final boolean gyroDrive(double speed,
+                            double distance,
+                            double angle,
+                            double timeoutS,
+                            IObjectDetector objectDetector) {
 
+        boolean successful = true;
         // Ensure that the opmode is still active
         if (opMode.opModeIsActive()) {
             // Set Target and Turn On RUN_TO_POSITION
             robot.setDriveTarget(distance, false);
             robot.setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            // start motion.
-            double speedToSet = Math.min(0.2d, speed);
-            robot.setDrivePower(speedToSet, speedToSet, speedToSet, speedToSet);
-            ElapsedTime driveTime = new ElapsedTime();
-
+            // reset the timeout time and start motion.
+            runtime.reset();
+            robot.setDrivePower(speed, speed, speed, speed);
             // keep looping while we are still active, and BOTH motors are running.
             while (opMode.opModeIsActive() &&
+                    runtime.seconds() < timeoutS &&
                     robot.isDriveBusy()) {
-                speedToSet = 0.2d + (driveTime.milliseconds() / 1000d);
-                speedToSet = Range.clip(speedToSet, 0d, 1d);
-                speedToSet = Math.min(speedToSet, speed);
 
                 // adjust relative speed based on heading error.
                 double error = getError(angle);
                 double steer = getSteer(error, P_DRIVE_COEFF);
 
                 // if driving in reverse, the motor correction also needs to be reversed
-                if (distance < 0)
-                    steer *= -1.0;
+                if (distance < 0d)
+                    steer *= -1d;
 
                 double speedFL, speedFR, speedRL, speedRR;
 
-                speedFL = speedRL = speedToSet - steer;
-                speedFR = speedRR = speedToSet + steer;
+                speedFL = speedRL = speed - steer;
+                speedFR = speedRR = speed + steer;
 
                 // Normalize speeds if either one exceeds +/- 1.0;
                 double max = Math.max(Math.abs(speedFL), Math.abs(speedFR));
-                if (max > 1.0) {
+                if (max > 1d) {
                     speedFL /= max;
                     speedRL /= max;
                     speedFR /= max;
                     speedRR /= max;
                 }
-                if (objectDetector.objectDetected()) {
+                if (objectDetector != null && objectDetector.objectDetected()) {
+                    robot.beep();
+                    successful = false;
                     break;
                 }
                 robot.setDrivePower(speedFL, speedFR, speedRL, speedRR);
@@ -146,6 +161,8 @@ public class RobotDriver {
             // Turn off RUN_TO_POSITION
             robot.setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
+
+        return successful;
     }
 
     private boolean onHeading(double speed, double angle, double PCoeff) {
@@ -184,6 +201,6 @@ public class RobotDriver {
     }
 
     private double getSteer(double error, double PCoeff) {
-        return Range.clip(error * PCoeff, -1, 1);
+        return Range.clip(error * PCoeff, -1d, 1d);
     }
 }

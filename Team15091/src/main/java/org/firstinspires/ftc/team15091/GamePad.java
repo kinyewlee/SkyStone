@@ -58,8 +58,7 @@ public class GamePad extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        final AztecRobot myRobot = new AztecRobot();
-        myRobot.init(hardwareMap);
+        final AztecRobot myRobot = new AztecRobot(hardwareMap);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();

@@ -4,6 +4,7 @@ import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -30,11 +31,12 @@ class AztecRobot {
     BNO055IMU imu;
     Servo servoHook = null, servoHand = null, servoWrist = null;
     DistanceSensor sensorRange = null;
+    ColorSensor sensorColor =null;
 
-    private static final double COUNTS_PER_MOTOR_REV = 288d;    // eg: Core Hex Motor Encoder
+    private static final double COUNTS_PER_MOTOR_REV = 1120d;    // eg: Core Hex Motor Encoder
     private static final double DRIVE_GEAR_REDUCTION = 1d;     // This is < 1.0 if geared UP, eg. 26d/10d
     private static final double WHEEL_DIAMETER_INCHES = 4d;     // For figuring circumference
-    private static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+    static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.14159265359d);
     static final double ARM_MAX = 2.95d;
     static final double ARM_MIN = 0.45d;
@@ -46,11 +48,7 @@ class AztecRobot {
     boolean openClaw = false;
     private int beepSoundID;
 
-    AztecRobot() {
-
-    }
-
-    void init(HardwareMap ahwMap) {
+    AztecRobot(HardwareMap ahwMap) {
         // Save reference to Hardware map
         hwMap = ahwMap;
         motorFL = hwMap.dcMotor.get("motor_0");
@@ -64,6 +62,7 @@ class AztecRobot {
         servoHand = hwMap.servo.get("servo_hand");
         servoWrist = hwMap.servo.get("servo_wrist");
         sensorRange = hwMap.get(DistanceSensor.class, "sensor_range");
+        sensorColor =hwMap.get(ColorSensor.class, "sensor_color_distance");
 
         motorArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -101,6 +100,16 @@ class AztecRobot {
 
         hookDown = false;
         beepSoundID = hwMap.appContext.getResources().getIdentifier("beep", "raw", hwMap.appContext.getPackageName());
+    }
+
+    double getRemainingDistance() {
+        int remainingFL = motorFL.getTargetPosition() - motorFL.getCurrentPosition();
+        int remainingFR = motorFR.getTargetPosition() - motorFR.getCurrentPosition();
+        int remainingRL = motorRL.getTargetPosition() - motorRL.getCurrentPosition();
+        int remainingRR = motorRR.getTargetPosition() - motorRR.getCurrentPosition();
+        double remainingAvg = (remainingFL + remainingFR + remainingRL + remainingRR) / 4;
+        double remainingDistance = remainingAvg / COUNTS_PER_INCH;
+        return remainingDistance;
     }
 
     final void beep() {
@@ -222,19 +231,23 @@ class AztecRobot {
 
     void modifyHook() {
         hookDown = !hookDown;
-        double hookPosition = hookDown ? 1 : 0;
+        modifyHook(hookDown);
+    }
+
+    void modifyHook(boolean hookDown) {
+        double hookPosition = hookDown ? 1d : 0d;
         servoHook.setPosition(hookPosition);
     }
 
     void openClaw() {
         openClaw = !openClaw;
-        double clawPosition = openClaw ? 0.4 : 0;
+        double clawPosition = openClaw ? 0.4d : 0d;
         servoHand.setPosition(clawPosition);
     }
 
     void turnClaw() {
         turnClaw = !turnClaw;
-        double wristPosition = turnClaw ? 1 : 0;
+        double wristPosition = turnClaw ? 1d : 0d;
         servoWrist.setPosition(wristPosition);
     }
 }
