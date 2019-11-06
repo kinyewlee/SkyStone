@@ -13,7 +13,7 @@ public class Autonomous_Skystone_Red_Foundation extends LinearOpMode {
         robot.resetDrive();
 
         RobotDriver robotDriver = new RobotDriver(robot, this);
-        DistanceDetector distanceDetector = new DistanceDetector(robot.sensorRange, 8d);
+        DistanceDetector distanceDetector = new DistanceDetector(robot.sensorRange, 8d, 90d);
         ColorDetector colorDetector= new ColorDetector(robot.sensorColor);
         telemetry.addData(">", "Press Play to start op mode");
         Telemetry.Item headingItem = telemetry.addData("Heading: ", "%.4f", robot.getHeading());

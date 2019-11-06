@@ -15,7 +15,7 @@ public class DistanceDetector implements IObjectDetector {
      * @param sensorToUse
      * @param threshold in CM
      */
-    public DistanceDetector(DistanceSensor sensorToUse, double threshold) {
+    public DistanceDetector(DistanceSensor sensorToUse, double threshold, double delay) {
         sensorRange = sensorToUse;
         this.threshold = threshold;
     }

@@ -93,6 +93,7 @@ public class RobotDriver {
 
                 robot.setDrivePower(speedF, speedF, speedR, speedR);
                 if (objectDetector != null && objectDetector.objectDetected()) {
+                    robot.beep();
                     break;
                 }
             }
@@ -212,20 +213,14 @@ public class RobotDriver {
             while (opMode.opModeIsActive() &&
                     runtime.seconds() < timeoutS &&
                     currentAngle < armAngle) {
-                currentAngle = robot.getArmAngle();
-                double gap = Math.abs(armAngle - currentAngle);
-                double suggestedPower = Range.scale(gap, 0d, (armAngle - 1d), 0d, 1d);
-                robot.setArmPower(suggestedPower);
+                robot.setArmPower(1d);
             }
         } else if (currentAngle > armAngle) {
             robot.setArmPower(-1d);
             while (opMode.opModeIsActive() &&
                     runtime.seconds() < timeoutS &&
                     currentAngle > armAngle) {
-                currentAngle = robot.getArmAngle();
-                double gap = Math.abs(currentAngle - armAngle);
-                double suggestedPower = -Range.clip(gap, 0d, 1d);
-                robot.setArmPower(suggestedPower);
+                robot.setArmPower(-1d);
             }
         }
         robot.setArmPower(0d);
@@ -234,7 +229,7 @@ public class RobotDriver {
     void setClaw(ClawPosition clawPosition) {
         switch (clawPosition) {
             case CLOSED:
-                robot.openClaw(false);
+                robot.servoHand.setPosition(0d);
                 break;
             case SIDE:
                 robot.turnClaw(false);
@@ -243,7 +238,7 @@ public class RobotDriver {
                 robot.turnClaw(true);
                 break;
             case OPENED:
-                robot.openClaw(true);
+                robot.servoHand.setPosition(0.6d);
                 break;
         }
     }

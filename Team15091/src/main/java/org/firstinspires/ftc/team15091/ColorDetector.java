@@ -6,18 +6,21 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 
 public class ColorDetector implements IObjectDetector {
     private ColorSensor sensorColor;
-    ColorDetector(ColorSensor colorSensor){
-        sensorColor= colorSensor;
+
+    ColorDetector(ColorSensor colorSensor) {
+        sensorColor = colorSensor;
     }
-    public boolean objectDetected(){
-        boolean detected=false;
-        if (sensorColor.blue()>250 || sensorColor.red() > 250){
-            detected=true;
+
+    public boolean objectDetected() {
+        boolean detected = false;
+        if (sensorColor.blue() > 250 || sensorColor.red() > 250) {
+            detected = true;
         }
 
         return detected;
     }
-    public void dispose(){
+
+    public void dispose() {
 
     }
 }

@@ -39,7 +39,7 @@ class AztecRobot {
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.14159265359d);
     static final double ARM_MAX = 2.95d;
-    static final double ARM_MIN = 0.45d;
+    static final double ARM_MIN = 0.35d;
     static final int WINCH_MAX = 5000;
     static final double WINCH_SPEED = 0.8d;
 
@@ -239,14 +239,10 @@ class AztecRobot {
         servoHook.setPosition(hookPosition);
     }
 
-    void openClaw(boolean open) {
-        double clawPosition = open ? 0.4d : 0d;
-        servoHand.setPosition(clawPosition);
-    }
-
     void openClaw() {
         openClaw = !openClaw;
-        openClaw(openClaw);
+        double clawPosition = openClaw ? 0.4d : 0d;
+        servoHand.setPosition(clawPosition);
     }
 
     void turnClaw(boolean side) {
