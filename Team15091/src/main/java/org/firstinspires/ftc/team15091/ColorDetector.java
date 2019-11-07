@@ -23,4 +23,8 @@ public class ColorDetector implements IObjectDetector {
     public void dispose() {
 
     }
+
+    public void reset() {
+
+    }
 }

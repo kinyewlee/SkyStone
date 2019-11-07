@@ -27,8 +27,18 @@ public class RobotDriver {
     }
 
     public final void setHook(HookPosition hookPosition) {
-        boolean hookDown = hookPosition == HookPosition.DOWN ? true : false;
-        robot.modifyHook(hookDown);
+        switch (hookPosition) {
+            case UP:
+                robot.servoHook.setPosition(0d);
+                break;
+            case DOWN:
+                robot.servoHook.setPosition(1d);
+                break;
+            case MIDDLE:
+                robot.servoHook.setPosition(0.5d);
+                break;
+        }
+
     }
 
     /**
@@ -206,20 +216,19 @@ public class RobotDriver {
     }
 
     void moveArm(double armAngle, double timeoutS) {
-        double currentAngle = robot.getArmAngle();
         runtime.reset();
-        if (currentAngle < armAngle) {
+        if (robot.getArmAngle() < armAngle) {
             robot.setArmPower(1d);
             while (opMode.opModeIsActive() &&
                     runtime.seconds() < timeoutS &&
-                    currentAngle < armAngle) {
+                    robot.getArmAngle() < armAngle) {
                 robot.setArmPower(1d);
             }
-        } else if (currentAngle > armAngle) {
+        } else if (robot.getArmAngle() > armAngle) {
             robot.setArmPower(-1d);
             while (opMode.opModeIsActive() &&
                     runtime.seconds() < timeoutS &&
-                    currentAngle > armAngle) {
+                    robot.getArmAngle() > armAngle) {
                 robot.setArmPower(-1d);
             }
         }

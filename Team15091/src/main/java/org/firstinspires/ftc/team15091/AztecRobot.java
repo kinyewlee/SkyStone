@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.android.AndroidTextToSpeech;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -31,15 +32,16 @@ class AztecRobot {
     BNO055IMU imu;
     Servo servoHook = null, servoHand = null, servoWrist = null;
     DistanceSensor sensorRange = null;
-    ColorSensor sensorColor =null;
+    ColorSensor sensorColor = null;
+    AndroidTextToSpeech tts = null;
 
     private static final double COUNTS_PER_MOTOR_REV = 1120d;    // eg: Core Hex Motor Encoder
     private static final double DRIVE_GEAR_REDUCTION = 1d;     // This is < 1.0 if geared UP, eg. 26d/10d
     private static final double WHEEL_DIAMETER_INCHES = 4d;     // For figuring circumference
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.14159265359d);
-    static final double ARM_MAX = 2.95d;
-    static final double ARM_MIN = 0.35d;
+    static final double ARM_MAX = 2.98d;
+    static final double ARM_MIN = 0.38d;
     static final int WINCH_MAX = 5000;
     static final double WINCH_SPEED = 0.8d;
 
@@ -62,7 +64,7 @@ class AztecRobot {
         servoHand = hwMap.servo.get("servo_hand");
         servoWrist = hwMap.servo.get("servo_wrist");
         sensorRange = hwMap.get(DistanceSensor.class, "sensor_range");
-        sensorColor =hwMap.get(ColorSensor.class, "sensor_color_distance");
+        sensorColor = hwMap.get(ColorSensor.class, "sensor_color_distance");
 
         motorArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -100,6 +102,9 @@ class AztecRobot {
 
         hookDown = false;
         beepSoundID = hwMap.appContext.getResources().getIdentifier("beep", "raw", hwMap.appContext.getPackageName());
+
+        tts = new AndroidTextToSpeech();
+        tts.initialize();
     }
 
     double getRemainingDistance() {
@@ -231,10 +236,6 @@ class AztecRobot {
 
     void modifyHook() {
         hookDown = !hookDown;
-        modifyHook(hookDown);
-    }
-
-    void modifyHook(boolean hookDown) {
         double hookPosition = hookDown ? 1d : 0d;
         servoHook.setPosition(hookPosition);
     }
@@ -253,5 +254,9 @@ class AztecRobot {
     void turnClaw() {
         turnClaw = !turnClaw;
         turnClaw(turnClaw);
+    }
+
+    void speak(String stuff) {
+        tts.speak(stuff);
     }
 }

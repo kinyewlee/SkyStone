@@ -31,6 +31,7 @@ public class SkystoneDetector implements IObjectDetector {
     private LinearOpMode opMode;
     List<Recognition> skytoneRecognitions;
     private boolean skytoneDetected = false;
+    float stonePosition = -1f;
 
     public SkystoneDetector(LinearOpMode opMode) {
         this.opMode = opMode;
@@ -62,6 +63,7 @@ public class SkystoneDetector implements IObjectDetector {
                 for (Recognition recognition : updatedRecognitions) {
                     if (recognition.getLabel() == LABEL_SECOND_ELEMENT) {
                         skytoneDetected = true;
+                        stonePosition = recognition.getLeft();
                         skytoneRecognitions.add(recognition);
                     }
                 }
@@ -69,6 +71,11 @@ public class SkystoneDetector implements IObjectDetector {
         }
 
         return skytoneDetected;
+    }
+
+    public void reset() {
+        skytoneDetected = false;
+        stonePosition = -1f;
     }
 
     public void dispose() {

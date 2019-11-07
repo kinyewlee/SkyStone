@@ -9,6 +9,7 @@ public class DistanceDetector implements IObjectDetector {
     private DistanceSensor sensorRange;
     private double threshold = 2;
     private ElapsedTime runtime = new ElapsedTime();
+    private boolean detected = false;
 
     /**
      * Set distance detector
@@ -22,7 +23,7 @@ public class DistanceDetector implements IObjectDetector {
 
     public boolean objectDetected() {
         double currentDistance = sensorRange.getDistance(DistanceUnit.CM);
-        boolean detected = false;
+        detected = false;
 
         if (currentDistance < threshold) {
             //if the detection last for 90 millisesoncds then sounds like real
@@ -38,5 +39,10 @@ public class DistanceDetector implements IObjectDetector {
 
     public void dispose() {
 
+    }
+
+    public void reset() {
+        runtime.reset();
+        detected = false;
     }
 }
