@@ -242,7 +242,7 @@ class AztecRobot {
 
     void openClaw() {
         openClaw = !openClaw;
-        double clawPosition = openClaw ? 0.4d : 0d;
+        double clawPosition = openClaw ? 0.5d : 0d;
         servoHand.setPosition(clawPosition);
     }
 
