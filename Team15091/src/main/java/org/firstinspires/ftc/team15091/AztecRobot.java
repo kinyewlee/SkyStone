@@ -246,14 +246,10 @@ class AztecRobot {
         servoHand.setPosition(clawPosition);
     }
 
-    void turnClaw(boolean side) {
-        double wristPosition = side ? 1d : 0d;
-        servoWrist.setPosition(wristPosition);
-    }
-
     void turnClaw() {
         turnClaw = !turnClaw;
-        turnClaw(turnClaw);
+        double wristPosition = turnClaw ? 1d : 0d;
+        servoWrist.setPosition(wristPosition);
     }
 
     void speak(String stuff) {

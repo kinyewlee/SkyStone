@@ -241,10 +241,10 @@ public class RobotDriver {
                 robot.servoHand.setPosition(0d);
                 break;
             case SIDE:
-                robot.turnClaw(false);
+                robot.servoWrist.setPosition(0d);
                 break;
             case FRONT:
-                robot.turnClaw(true);
+                robot.servoWrist.setPosition(1d);
                 break;
             case OPENED:
                 robot.servoHand.setPosition(0.6d);
