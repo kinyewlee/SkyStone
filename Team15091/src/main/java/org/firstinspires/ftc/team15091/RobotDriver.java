@@ -14,10 +14,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 public class RobotDriver {
-    private static final double P_TURN_COEFF = 0.09d;     // Larger is more responsive, but also less stable
+    private static final double P_TURN_COEFF = 0.08d;     // Larger is more responsive, but also less stable
     private static final double P_SLIDE_COEFF = 0.07d;     // Larger is more responsive, but also less stable
     private static final double HEADING_THRESHOLD = 1d;      // As tight as we can make it with an integer gyro
-    private static final double P_DRIVE_COEFF = 0.1d;     // Larger is more responsive, but also less stable
+    private static final double P_DRIVE_COEFF = 0.09d;     // Larger is more responsive, but also less stable
     private AztecRobot robot;
     private ElapsedTime runtime = new ElapsedTime();
     LinearOpMode opMode;
