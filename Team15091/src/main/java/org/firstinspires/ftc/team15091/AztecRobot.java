@@ -135,9 +135,9 @@ class AztecRobot {
      */
     public void setDrivePower(double powerFL, double powerFR, double powerRL, double powerRR) {
         motorFL.setPower(powerFL);
-        motorFR.setPower(powerFR);
-        motorRL.setPower(powerRL);
         motorRR.setPower(powerRR);
+        motorRL.setPower(powerRL);
+        motorFR.setPower(powerFR);
     }
 
     void setDriveMode(DcMotor.RunMode runMode) {

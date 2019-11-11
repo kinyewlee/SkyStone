@@ -30,6 +30,8 @@ public class Autonomous_Skystone_Red_Foundation extends LinearOpMode {
         }
 
         if (opModeIsActive()) {
+            robotDriver.setHook(HookPosition.UP);
+
             //move to foundation
             robotDriver.gyroDrive(0.9d, -24d, 0d, 2d, null);
             robotDriver.gyroSlide(0.9d, 22d, 0d, 2d, null);

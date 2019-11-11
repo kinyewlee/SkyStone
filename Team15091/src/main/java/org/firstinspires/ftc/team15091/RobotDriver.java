@@ -15,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 public class RobotDriver {
     private static final double P_TURN_COEFF = 0.09d;     // Larger is more responsive, but also less stable
+    private static final double P_SLIDE_COEFF = 0.07d;     // Larger is more responsive, but also less stable
     private static final double HEADING_THRESHOLD = 1d;      // As tight as we can make it with an integer gyro
     private static final double P_DRIVE_COEFF = 0.1d;     // Larger is more responsive, but also less stable
     private AztecRobot robot;
@@ -35,7 +36,7 @@ public class RobotDriver {
                 robot.servoHook.setPosition(1d);
                 break;
             case MIDDLE:
-                robot.servoHook.setPosition(0.5d);
+                robot.servoHook.setPosition(0.6d);
                 break;
         }
 
@@ -83,7 +84,7 @@ public class RobotDriver {
 
                 // adjust relative speed based on heading error.
                 double error = getError(angle);
-                double steer = getSteer(error, P_TURN_COEFF);
+                double steer = getSteer(error, P_SLIDE_COEFF);
 
                 // if driving in reverse, the motor correction also needs to be reversed
                 if (distance < 0)
