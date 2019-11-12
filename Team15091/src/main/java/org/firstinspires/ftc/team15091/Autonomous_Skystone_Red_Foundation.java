@@ -14,7 +14,7 @@ public class Autonomous_Skystone_Red_Foundation extends LinearOpMode {
 
         RobotDriver robotDriver = new RobotDriver(robot, this);
         DistanceDetector distanceDetector = new DistanceDetector(robot.sensorRange, 8d, 90d);
-        ColorDetector colorDetector= new ColorDetector(robot.sensorColor);
+        ColorDetector colorDetector = new ColorDetector(robot.sensorColor);
         telemetry.addData(">", "Press Play to start op mode");
         Telemetry.Item headingItem = telemetry.addData("Heading: ", "%.4f", robot.getHeading());
         Telemetry.Item detectorItem = telemetry.addData("Detected: ", distanceDetector.objectDetected());
@@ -52,19 +52,13 @@ public class Autonomous_Skystone_Red_Foundation extends LinearOpMode {
             sleep(200L);
 
             //move under skybridge
-            robotDriver.gyroSlide(0.9d, -5d, 270d, 2d, null);
-            robotDriver.gyroDrive(0.9d, 24d, 270d, 2d, null);
+            robotDriver.gyroSlide(0.9d, 25d, 270d, 2d, null);
 
-            //if another robot blocking under skybridge detour
-            boolean stepFinish = robotDriver.gyroDrive(0.3d, 34d, 270d, 2d, distanceDetector);
-            double remainingDistance = 20;
-
-            if (!stepFinish) {
-                remainingDistance += robot.getRemainingDistance();
-                robotDriver.gyroSlide(0.9d, 32d, 270d, 2d, null);
+            //if another robot blocking under skybridge stop
+            boolean stepFinish = robotDriver.gyroDrive(0.4d, 36d, 270d, 4d, distanceDetector);
+            if (stepFinish) {
+                robotDriver.gyroDrive(0.4d, 16d, 270d, 2d, colorDetector);
             }
-            robotDriver.gyroDrive(0.5d, remainingDistance, 270d, 2d, colorDetector);
-
         }
     }
 }

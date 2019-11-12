@@ -2,19 +2,20 @@ package org.firstinspires.ftc.team15091;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
-@Autonomous(name = "Skystone: Blue", group = "Skystone")
-public class Autonomous_Skystone_Blue extends LinearOpMode {
+@Autonomous(name = "Skystone: Red", group = "Skystone")
+public class Autonomous_Skystone_Red extends LinearOpMode {
     @Override
     public void runOpMode() {
         final AztecRobot robot = new AztecRobot(hardwareMap);
+        robot.resetDrive();
+
         final RobotDriver robotDriver = new RobotDriver(robot, this);
         final SkystoneDetector skystoneDetector = new SkystoneDetector(this);
         final DistanceDetector distanceDetector = new DistanceDetector(robot.sensorRange, 30d, 100d);
         final ColorDetector colorDetector = new ColorDetector(robot.sensorColor);
-        int firstSkystoneLocation = -1, secondSkystoneLocation = -1;
+        int firstSkystoneLocation = 3, secondSkystoneLocation = -1;
 
         robot.beep();
 
@@ -52,7 +53,7 @@ public class Autonomous_Skystone_Blue extends LinearOpMode {
             }.start();
 
             //move forward to start scan first skystone
-            robotDriver.gyroDrive(1d, 16.85d, 0d, 1d, null);
+            robotDriver.gyroDrive(1d, 20.7d, 0d, 1.5d, null);
 
             sleep(30L);
 
@@ -60,7 +61,8 @@ public class Autonomous_Skystone_Blue extends LinearOpMode {
             skystoneDetector.reset();
             //find first skystone from 1 to 3
             for (int i = 0; i < 3; i++) {
-                robotDriver.gyroSlide(0.5d, -11.7d, 0d, 1.15d, null);
+                robotDriver.gyroSlide(0.6d, i == 0 ? 15.1d : 12.4d, -0.5d, 1.1d, null);
+                //robotDriver.gyroTurn(0.7d, 0d, 0.5d);
                 boolean skystoneFound = false;
                 for (int j = 0; j < 10; j++) {
                     if (skystoneDetector.objectDetected()) {
@@ -100,22 +102,23 @@ public class Autonomous_Skystone_Blue extends LinearOpMode {
             robotDriver.setClaw(ClawPosition.SIDE);
 
             //deliver first skystone under skybridge
-            double distanceToSkybridge = 63d + ((firstSkystoneLocation) * 8d);
-            robotDriver.gyroSlide(0.84d, distanceToSkybridge, 0d, 4d, null);
+            double distanceToSkybridge = 64d + ((firstSkystoneLocation) * 9d);
+            robotDriver.gyroSlide(1d, -distanceToSkybridge, 0d, 4d, null);
 
             //release first skystone
             new Thread() {
                 public void run() {
-                    robotDriver.moveArm(2.2d, 1d);
-                    robotDriver.moveArm(2.85d, 1d);
+                    robotDriver.moveArm(1.3d, 2d);
+                    robotDriver.moveArm(2.85d, 1.5d);
                 }
             }.start();
-            sleep(60L);
+            sleep(600L);
             robotDriver.setClaw(ClawPosition.OPENED);
+            sleep(200L);
 
             //return to get 2nd skystone
-            robotDriver.gyroSlide(0.8d, -distanceToSkybridge - 3.5d, 0d, 4d, null);
-            robotDriver.gyroTurn(0.7d, 0d, 0.9d);
+            robotDriver.gyroSlide(1d, distanceToSkybridge - 7d, 2d, 4d, null);
+            robotDriver.gyroTurn(0.75d, 0d, 0.7d);
 
             new Thread() {
                 public void run() {
@@ -129,7 +132,7 @@ public class Autonomous_Skystone_Blue extends LinearOpMode {
             secondSkystoneLocation = firstSkystoneLocation;
             //find second skystone from 3 to 5
             for (int i = firstSkystoneLocation; i < 5; i++) {
-                robotDriver.gyroSlide(0.5d, -10.32d, 0d, 1d, null);
+                robotDriver.gyroSlide(0.6d, 10.75d, -0.8d, 1d, null);
                 boolean skystoneFound = false;
                 for (int j = 0; j < 10; j++) {
                     if (skystoneDetector.objectDetected()) {
@@ -167,9 +170,9 @@ public class Autonomous_Skystone_Blue extends LinearOpMode {
 
             distanceToSkybridge = 60d + (secondSkystoneLocation * 8d);
             //turn and park under skybridge
-            robotDriver.gyroTurn(0.7d, 90d, 1.9d);
-            robotDriver.gyroSlide(1d, -8d, 90d, 1d, null);
-            robotDriver.gyroDrive(1d, distanceToSkybridge, 90d, 7d, null);
+            robotDriver.gyroTurn(0.7d, 270d, 1.9d);
+            robotDriver.gyroSlide(1d, 6d, 270d, 1d, null);
+            robotDriver.gyroDrive(1d, distanceToSkybridge, 270d, 7d, null);
         }
     }
 }

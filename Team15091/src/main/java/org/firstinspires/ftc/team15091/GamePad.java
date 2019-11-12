@@ -60,6 +60,9 @@ public class GamePad extends LinearOpMode {
 
         final AztecRobot myRobot = new AztecRobot(hardwareMap);
 
+        telemetry.addData(">", "Press Play to start op mode");
+        telemetry.update();
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();

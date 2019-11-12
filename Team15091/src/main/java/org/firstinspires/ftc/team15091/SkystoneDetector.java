@@ -31,7 +31,7 @@ public class SkystoneDetector implements IObjectDetector {
     private LinearOpMode opMode;
     List<Recognition> skytoneRecognitions;
     private boolean skytoneDetected = false;
-    float stonePosition = -1f;
+    float visibleMidpoint = -1f;
 
     public SkystoneDetector(LinearOpMode opMode) {
         this.opMode = opMode;
@@ -61,9 +61,13 @@ public class SkystoneDetector implements IObjectDetector {
                 skytoneRecognitions = new ArrayList<>();
                 skytoneDetected = false;
                 for (Recognition recognition : updatedRecognitions) {
-                    if (recognition.getLabel() == LABEL_SECOND_ELEMENT) {
+                    float recognitionLeft = Math.max(recognition.getLeft(), 0L);
+                    float recognitionWidth = recognition.getRight() - recognitionLeft;
+                    float recognitionMid = recognitionLeft + (recognitionWidth / 2L);
+
+                    if (recognition.getLabel() == LABEL_SECOND_ELEMENT && recognitionMid > 155L && recognitionMid < 600L) {
+                        visibleMidpoint = recognitionMid;
                         skytoneDetected = true;
-                        stonePosition = recognition.getLeft();
                         skytoneRecognitions.add(recognition);
                     }
                 }
@@ -75,7 +79,7 @@ public class SkystoneDetector implements IObjectDetector {
 
     public void reset() {
         skytoneDetected = false;
-        stonePosition = -1f;
+        visibleMidpoint = -1f;
     }
 
     public void dispose() {
@@ -100,7 +104,7 @@ public class SkystoneDetector implements IObjectDetector {
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
-        Vuforia.setHint(HINT.HINT_MAX_SIMULTANEOUS_IMAGE_TARGETS, 4);
+        Vuforia.setHint(HINT.HINT_MAX_SIMULTANEOUS_IMAGE_TARGETS, 1);
         // Loading trackables is not necessary for the TensorFlow Object Detection engine.
     }
 
@@ -111,7 +115,7 @@ public class SkystoneDetector implements IObjectDetector {
         int tfodMonitorViewId = opMode.hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", opMode.hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minimumConfidence = 0.62d;
+        tfodParameters.minimumConfidence = 0.63d;
         tfodParameters.useObjectTracker = false;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);

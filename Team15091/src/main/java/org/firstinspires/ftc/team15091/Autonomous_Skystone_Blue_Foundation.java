@@ -18,7 +18,7 @@ public class Autonomous_Skystone_Blue_Foundation extends LinearOpMode {
 
         RobotDriver robotDriver = new RobotDriver(robot, this);
         DistanceDetector distanceDetector = new DistanceDetector(robot.sensorRange, 10d, 90d);
-        ColorDetector colorDetector= new ColorDetector(robot.sensorColor);
+        ColorDetector colorDetector = new ColorDetector(robot.sensorColor);
         telemetry.addData(">", "Press Play to start op mode");
         Telemetry.Item headingItem = telemetry.addData("Heading: ", "%.4f", robot.getHeading());
         Telemetry.Item detectorItem = telemetry.addData("Detected: ", distanceDetector.objectDetected());
@@ -38,8 +38,8 @@ public class Autonomous_Skystone_Blue_Foundation extends LinearOpMode {
 
             //move to foundation
             robotDriver.gyroDrive(0.9d, -24d, 0d, 2d, null);
-            robotDriver.gyroSlide(0.9d, -22d, 0d, 2d, null);
-            robotDriver.gyroDrive(0.2d, -19d, 0d, 3d, null);
+            robotDriver.gyroSlide(0.9d, -22.5d, 0d, 2d, null);
+            robotDriver.gyroDrive(0.2d, -18.5d, 0d, 3d, null);
 
             //attach to foundation
             robotDriver.setHook(HookPosition.DOWN);
@@ -49,26 +49,20 @@ public class Autonomous_Skystone_Blue_Foundation extends LinearOpMode {
             robotDriver.gyroDrive(0.9d, 18d, 0d, 2d, null);
             robotDriver.gyroSlide(0.9d, 24d, 0d, 2d, null);
             robotDriver.gyroTurn(0.9d, 90d, 2d);
-            robotDriver.gyroDrive(0.9d, -20d, 90d, 2d, null);
+            robotDriver.gyroDrive(0.9d, -18d, 90d, 2d, null);
 
             //detach foundation
             robotDriver.setHook(HookPosition.UP);
             sleep(200L);
 
             //move under skybridge
-            robotDriver.gyroSlide(0.9d, 5d, 90d, 2d, null);
-            robotDriver.gyroDrive(0.9d, 24d, 90d, 2d, null);
+            robotDriver.gyroSlide(0.9d, -31d, 90d, 2d, null);
 
-            //if another robot blocking under skybridge detour
-            boolean stepFinish = robotDriver.gyroDrive(0.3d, 34d, 90d, 2d, distanceDetector);
-            double remainingDistance = 20;
-
-            if (!stepFinish) {
-                remainingDistance += robot.getRemainingDistance();
-                robotDriver.gyroSlide(0.9d, -32d, 90d, 2d, null);
+            //if another robot blocking under skybridge stop
+            boolean stepFinish = robotDriver.gyroDrive(0.4d, 36d, 90d, 4d, distanceDetector);
+            if (stepFinish) {
+                robotDriver.gyroDrive(0.4d, 16d, 90d, 2d, colorDetector);
             }
-            robotDriver.gyroDrive(0.5d, remainingDistance, 90d, 2d, colorDetector);
-
         }
     }
 }
