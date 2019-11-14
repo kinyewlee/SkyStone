@@ -65,7 +65,7 @@ public class SkystoneDetector implements IObjectDetector {
                     float recognitionWidth = recognition.getRight() - recognitionLeft;
                     float recognitionMid = recognitionLeft + (recognitionWidth / 2L);
 
-                    if (recognition.getLabel() == LABEL_SECOND_ELEMENT && recognitionMid > 155L && recognitionMid < 600L) {
+                    if (recognition.getLabel() == LABEL_SECOND_ELEMENT && recognitionMid > 160L && recognitionMid < 600L) {
                         visibleMidpoint = recognitionMid;
                         skytoneDetected = true;
                         skytoneRecognitions.add(recognition);
@@ -115,7 +115,7 @@ public class SkystoneDetector implements IObjectDetector {
         int tfodMonitorViewId = opMode.hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", opMode.hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minimumConfidence = 0.63d;
+        tfodParameters.minimumConfidence = 0.7d;
         tfodParameters.useObjectTracker = false;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);

@@ -21,10 +21,7 @@ public class GamePadHelper {
 
     void processJoystick() {
         // Setup a variable for each drive wheel to save power level for telemetry
-        double powerFL;
-        double powerFR;
-        double powerRR;
-        double powerRL;
+        double powerFL, powerFR, powerRR, powerRL;
 
         // POV Mode uses left stick y to go forward, and left stick x to turn.
         // right stick x to move side way
@@ -32,6 +29,7 @@ public class GamePadHelper {
         double drive = Range.clip(-gamepad.left_stick_y - gamepad.right_stick_y, -0.9d, 0.9d);
         double turn = gamepad.left_stick_x;
         double side = gamepad.right_stick_x;
+
 
         if (gamePadOrientation == GamePadOrientation.REVERSE) {
             drive *= -1d;

@@ -15,7 +15,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 public class RobotDriver {
     private static final double P_TURN_COEFF = 0.08d;     // Larger is more responsive, but also less stable
-    private static final double P_SLIDE_COEFF = 0.06d;     // Larger is more responsive, but also less stable
+    private static final double P_SLIDE_COEFF = 0.07d;     // Larger is more responsive, but also less stable
     private static final double HEADING_THRESHOLD = 1d;      // As tight as we can make it with an integer gyro
     private static final double P_DRIVE_COEFF = 0.09d;     // Larger is more responsive, but also less stable
     private AztecRobot robot;
@@ -56,8 +56,10 @@ public class RobotDriver {
                 runtime.seconds() < timeoutS &&
                 !onHeading(speed, angle, P_TURN_COEFF)) {
             // Update telemetry & Allow time for other processes to run.
-
         }
+
+        // Stop all motion;
+        robot.setDrivePower(0d, 0d, 0d, 0d);
     }
 
     final void gyroSlide(double speed,
