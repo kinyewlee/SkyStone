@@ -15,6 +15,8 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
         final SkystoneDetector skystoneDetector = new SkystoneDetector(this);
         final DistanceDetector distanceDetector = new DistanceDetector(robot.sensorRange, 29.5d, 100d);
         final ColorDetector colorDetector = new ColorDetector(robot.sensorColor);
+        TouchDetector touchDetector = new TouchDetector(robot.digitalLeft);
+
         int firstSkystoneLocation = 2, secondSkystoneLocation = 4;
 
         robot.beep();
@@ -63,8 +65,8 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
             //find first skystone from 1 to 3
             for (int i = 0; i < 3; i++) {
                 skystoneDetector.reset();
-                robotDriver.gyroSlide(0.5d, i == 0 ? 16.2d : 12.5d, 0d, 1.6d, null);
-                //robotDriver.gyroTurn(0.7d, 0d, 0.5d);
+                robotDriver.gyroSlide(0.5d, i == 0 ? 16d : 12.4d, 0d, 1.6d, null);
+                robotDriver.gyroTurn(0.7d, 0d, 0.5d);
                 for (int j = 0; j < 10; j++) {
                     if (skystoneDetector.objectDetected()) {
                         firstSkystoneLocation = i;
@@ -101,10 +103,10 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
             robotDriver.gyroTurn(0.85d, 270d, 1.4d);
 
             //deliver first skystone under skybridge
-            double distanceToSkybridge = 44d + ((firstSkystoneLocation) * 9d);
+            double distanceToSkybridge = 44d + ((firstSkystoneLocation) * 8.9d);
             robotDriver.gyroDrive(1d, distanceToSkybridge, 270d, 3.8d, null);
             robotDriver.setClaw(ClawPosition.OPENED);
-            robotDriver.gyroDrive(1d, -distanceToSkybridge, 270d, 3.8d, null);
+            robotDriver.gyroDrive(1d, -distanceToSkybridge, 270d, 3.7d, null);
 
             new Thread() {
                 public void run() {
@@ -120,9 +122,10 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
             //find second skystone
             skystoneFound = false;
             if (firstSkystoneLocation == 2) {
-                robotDriver.gyroSlide(0.55d, 36.6d, 0d, 2d, null);
-                robotDriver.gyroTurn(0.8d, 6d, 0.7d);
-                secondSkystoneLocation = 4;
+                skystoneDetector.reset();
+                robotDriver.gyroSlide(0.6d, 33d, 5d, 2d, touchDetector);
+                robotDriver.gyroTurn(0.8d, 15d, 0.7d);
+                secondSkystoneLocation = 3;
             }
             else {
                 //find second skystone from 3 to 5
@@ -147,11 +150,15 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
             sleep(30L);
             distanceDetector.reset();
             robotDriver.gyroDrive(0.3d, 4d, 0d, 1d, distanceDetector);
-            sleep(25L);
 
-            robotDriver.moveArm(0.4d, 1.7d);
+            new Thread() {
+                public void run() {
+                    robotDriver.moveArm(0.4d, 2d);
+                }
+            }.start();
+            sleep(1200L);
             robotDriver.setClaw(ClawPosition.CLOSED);
-            sleep(290L);
+            sleep(900L);
 
             //move arm back
             new Thread() {
@@ -162,11 +169,12 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
             }.start();
             robotDriver.gyroTurn(1d, 270d, 0.8d);
 
-            distanceToSkybridge = 52d + ((secondSkystoneLocation) * 9d);
+            distanceToSkybridge = 53d + ((secondSkystoneLocation) * 8.9d);
             robotDriver.gyroSlide(1d, 4.7d, 270d, 0.8d, null);
-            robotDriver.gyroDrive(1d, distanceToSkybridge, 270d, 6d, null);
+            robotDriver.gyroDrive(1d, distanceToSkybridge, 270d, 7d, null);
 
             robotDriver.setClaw(ClawPosition.OPENED);
+            robot.setDriveZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             robotDriver.gyroDrive(1d, -12d, 270d, 1d, colorDetector);
         }
     }

@@ -26,7 +26,7 @@ public class GamePadHelper {
         // POV Mode uses left stick y to go forward, and left stick x to turn.
         // right stick x to move side way
         // - This uses basic math to combine motions and is easier to drive straight.
-        double drive = Range.clip(-gamepad.left_stick_y - gamepad.right_stick_y, -0.9d, 0.9d);
+        double drive = Range.scale(-gamepad.left_stick_y - gamepad.right_stick_y, -1d, 1d, -0.9d, 0.9d);
         double turn = gamepad.left_stick_x;
         double side = gamepad.right_stick_x;
 
@@ -40,6 +40,13 @@ public class GamePadHelper {
         powerRL = Range.clip(drive + turn - side, -1.0, 1.0);
         powerFR = Range.clip(drive - turn - side, -1.0, 1.0);
         powerRR = Range.clip(drive - turn + side, -1.0, 1.0);
+
+        if (gamepad.left_bumper) {
+            powerFL *= 0.75d;
+            powerRL *= 0.75d;
+            powerFR *= 0.75d;
+            powerRR *= 0.75d;
+        }
 
         // Send calculated power to wheels
         robot.setDrivePower(powerFL, powerFR, powerRL, powerRR);

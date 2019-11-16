@@ -7,9 +7,11 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.android.AndroidTextToSpeech;
@@ -34,6 +36,7 @@ class AztecRobot {
     DistanceSensor sensorRange = null;
     ColorSensor sensorColor = null;
     AndroidTextToSpeech tts = null;
+    TouchSensor digitalLeft = null;
 
     private static final double COUNTS_PER_MOTOR_REV = 1120d;    // eg: Core Hex Motor Encoder
     private static final double DRIVE_GEAR_REDUCTION = 1d;     // This is < 1.0 if geared UP, eg. 26d/10d
@@ -65,6 +68,7 @@ class AztecRobot {
         servoWrist = hwMap.servo.get("servo_wrist");
         sensorRange = hwMap.get(DistanceSensor.class, "sensor_range");
         sensorColor = hwMap.get(ColorSensor.class, "sensor_color_distance");
+        digitalLeft = hwMap.touchSensor.get("sensor_digital_left");
 
         motorArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
