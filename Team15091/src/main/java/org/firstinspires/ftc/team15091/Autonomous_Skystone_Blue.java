@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.team15091;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @Autonomous(name = "Skystone: Blue", group = "Skystone")
+@Disabled
 public class Autonomous_Skystone_Blue extends LinearOpMode {
     @Override
     public void runOpMode() {

@@ -75,8 +75,10 @@ public class RobotDriver {
             robot.setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // start motion.
+            double counter = 0d;
             runtime.reset();
-            robot.setDrivePower(speed, speed, speed, speed);
+            double powerToSet = Math.min(speed, 0.5d);
+            robot.setDrivePower(powerToSet, powerToSet, powerToSet, powerToSet);
             ElapsedTime driveTime = new ElapsedTime();
 
             // keep looping while we are still active, and BOTH motors are running.
@@ -84,30 +86,40 @@ public class RobotDriver {
                     runtime.seconds() < timeoutS &&
                     robot.isDriveBusy()) {
 
-                // adjust relative speed based on heading error.
-                double error = getError(angle);
-                double steer = getSteer(error, P_SLIDE_COEFF);
+//                // adjust relative speed based on heading error.
+//                double error = getError(angle);
+//                double steer = getSteer(error, P_SLIDE_COEFF);
+//
+//                // if driving in reverse, the motor correction also needs to be reversed
+//                if (distance < 0)
+//                    steer *= -1.0;
+//
+//                double speedFL, speedFR, speedRL, speedRR;
+//
+//                speedFL = powerToSet + steer;
+//                speedFR = powerToSet + steer;
+//                speedRL = powerToSet - steer;
+//                speedRR = powerToSet - steer;
+//
+//                double max = Math.max(Math.abs(speedFL), Math.abs(speedFR));
+//                if (max > 1d) {
+//                    speedFL /= max;
+//                    speedRL /= max;
+//                    speedFR /= max;
+//                    speedRR /= max;
+//                }
 
-                // if driving in reverse, the motor correction also needs to be reversed
-                if (distance < 0)
-                    steer *= -1.0;
+//                robot.setDrivePower(speedFL, speedFR, speedRL, speedRR);
 
-                double speedF, speedR;
-
-                speedF = speed + steer;
-                speedR = speed - steer;
-
-                // Normalize speeds if either one exceeds +/- 1.0;
-                double max = Math.max(Math.abs(speedF), Math.abs(speedR));
-                if (max > 1.0) {
-                    speedF /= max;
-                    speedR /= max;
-                }
-
-                robot.setDrivePower(speedF, speedF, speedR, speedR);
+                robot.setDrivePower(powerToSet, powerToSet, powerToSet, powerToSet);
                 if (objectDetector != null && objectDetector.objectDetected()) {
                     robot.beep();
                     break;
+                }
+
+                if (runtime.milliseconds() > counter && powerToSet < speed) {
+                    powerToSet += 0.01d;
+                    counter += 20d;
                 }
             }
 

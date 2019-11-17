@@ -77,7 +77,7 @@ class AztecRobot {
         motorFR.setDirection(DcMotorSimple.Direction.REVERSE);
         motorRR.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        motorWinch.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorWinch.setDirection(DcMotorSimple.Direction.REVERSE);
         motorWinch.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorWinch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
