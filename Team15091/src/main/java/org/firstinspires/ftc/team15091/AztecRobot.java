@@ -37,6 +37,7 @@ class AztecRobot {
     ColorSensor sensorColor = null;
     AndroidTextToSpeech tts = null;
     TouchSensor digitalLeft = null;
+    TouchSensor digitalRight = null;
 
     private static final double COUNTS_PER_MOTOR_REV = 1120d;    // eg: Core Hex Motor Encoder
     private static final double DRIVE_GEAR_REDUCTION = 1d;     // This is < 1.0 if geared UP, eg. 26d/10d
@@ -69,6 +70,7 @@ class AztecRobot {
         sensorRange = hwMap.get(DistanceSensor.class, "sensor_range");
         sensorColor = hwMap.get(ColorSensor.class, "sensor_color_distance");
         digitalLeft = hwMap.touchSensor.get("sensor_digital_left");
+        digitalRight = hwMap.touchSensor.get("sensor_digital_right");
 
         motorArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 

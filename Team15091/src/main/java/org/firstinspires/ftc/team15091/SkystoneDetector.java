@@ -32,9 +32,11 @@ public class SkystoneDetector implements IObjectDetector {
     List<Recognition> skytoneRecognitions;
     private boolean skytoneDetected = false;
     float visibleMidpoint = -1f;
+    float thresholdMax = 500L;
 
-    public SkystoneDetector(LinearOpMode opMode) {
+    public SkystoneDetector(LinearOpMode opMode, float max) {
         this.opMode = opMode;
+        thresholdMax = max;
         initVuforia();
 
         if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
@@ -65,7 +67,7 @@ public class SkystoneDetector implements IObjectDetector {
                     float recognitionWidth = recognition.getRight() - recognitionLeft;
                     float recognitionMid = recognitionLeft + (recognitionWidth / 2L);
 
-                    if (recognition.getLabel() == LABEL_SECOND_ELEMENT && recognitionMid > 180L && recognitionMid < 500L) {
+                    if (recognition.getLabel() == LABEL_SECOND_ELEMENT && recognitionMid > 180L && recognitionMid < thresholdMax) {
                         visibleMidpoint = recognitionMid;
                         skytoneDetected = true;
                         skytoneRecognitions.add(recognition);
