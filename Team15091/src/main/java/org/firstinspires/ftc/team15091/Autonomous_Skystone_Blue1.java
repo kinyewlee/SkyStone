@@ -12,7 +12,7 @@ public class Autonomous_Skystone_Blue1 extends LinearOpMode {
         robot.resetDrive();
 
         final RobotDriver robotDriver = new RobotDriver(robot, this);
-        final SkystoneDetector skystoneDetector = new SkystoneDetector(this, 500L);
+        final SkystoneDetector skystoneDetector = new SkystoneDetector(this, 180L, 500L);
         final DistanceDetector distanceDetector = new DistanceDetector(robot.sensorRange, 29.3d, 100d);
         final ColorDetector colorDetector = new ColorDetector(robot.sensorColor);
         TouchDetector touchDetector = new TouchDetector(robot.digitalRight);

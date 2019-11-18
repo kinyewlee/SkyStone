@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.team15091;
 
+import android.util.Range;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.vuforia.HINT;
 import com.vuforia.Vuforia;
@@ -11,10 +13,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 public class SkystoneDetector implements IObjectDetector {
     private static final String TFOD_MODEL_ASSET = "Skystone.tflite";
@@ -32,11 +31,12 @@ public class SkystoneDetector implements IObjectDetector {
     List<Recognition> skytoneRecognitions;
     private boolean skytoneDetected = false;
     float visibleMidpoint = -1f;
-    float thresholdMax = 500L;
+    float thresholdMin = 180L, thresholdMax = 550L;
 
-    public SkystoneDetector(LinearOpMode opMode, float max) {
+    public SkystoneDetector(LinearOpMode opMode, float thresholdMin, float thresholdMax) {
         this.opMode = opMode;
-        thresholdMax = max;
+        this.thresholdMin = thresholdMin;
+        this.thresholdMax = thresholdMax;
         initVuforia();
 
         if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
@@ -67,7 +67,7 @@ public class SkystoneDetector implements IObjectDetector {
                     float recognitionWidth = recognition.getRight() - recognitionLeft;
                     float recognitionMid = recognitionLeft + (recognitionWidth / 2L);
 
-                    if (recognition.getLabel() == LABEL_SECOND_ELEMENT && recognitionMid > 180L && recognitionMid < thresholdMax) {
+                    if (recognition.getLabel() == LABEL_SECOND_ELEMENT && recognitionMid > thresholdMin && recognitionMid < thresholdMax) {
                         visibleMidpoint = recognitionMid;
                         skytoneDetected = true;
                         skytoneRecognitions.add(recognition);

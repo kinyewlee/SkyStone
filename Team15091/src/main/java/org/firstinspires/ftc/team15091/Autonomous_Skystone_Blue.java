@@ -13,7 +13,7 @@ public class Autonomous_Skystone_Blue extends LinearOpMode {
     public void runOpMode() {
         final AztecRobot robot = new AztecRobot(hardwareMap);
         final RobotDriver robotDriver = new RobotDriver(robot, this);
-        final SkystoneDetector skystoneDetector = new SkystoneDetector(this, 500L);
+        final SkystoneDetector skystoneDetector = new SkystoneDetector(this, 180L, 500L);
         final DistanceDetector distanceDetector = new DistanceDetector(robot.sensorRange, 30d, 100d);
         final ColorDetector colorDetector = new ColorDetector(robot.sensorColor);
         int firstSkystoneLocation = -1, secondSkystoneLocation = -1;

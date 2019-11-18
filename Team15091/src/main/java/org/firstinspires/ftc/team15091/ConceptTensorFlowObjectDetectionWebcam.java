@@ -58,7 +58,7 @@ import java.util.List;
 public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
     @Override
     public void runOpMode() {
-        SkystoneDetector skystoneDetector = new SkystoneDetector(this, 550L);
+        SkystoneDetector skystoneDetector = new SkystoneDetector(this, 180L, 550L);
 
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");

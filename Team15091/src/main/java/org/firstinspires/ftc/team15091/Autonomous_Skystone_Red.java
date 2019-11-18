@@ -12,7 +12,7 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
         robot.resetDrive();
 
         final RobotDriver robotDriver = new RobotDriver(robot, this);
-        final SkystoneDetector skystoneDetector = new SkystoneDetector(this, 550L);
+        final SkystoneDetector skystoneDetector = new SkystoneDetector(this, 180L, 550L);
         final DistanceDetector distanceDetector = new DistanceDetector(robot.sensorRange, 29.3d, 100d);
         final ColorDetector colorDetector = new ColorDetector(robot.sensorColor);
         TouchDetector touchDetector = new TouchDetector(robot.digitalLeft);
@@ -143,7 +143,7 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
                 }.start();
 
                 skystoneDetector.reset();
-                robotDriver.gyroSlide(0.6d, 33d, 5d, 2d, touchDetector);
+                robotDriver.gyroSlide(0.6d, 32d, 5d, 2d, touchDetector);
                 robotDriver.gyroTurn(0.8d, 15d, 0.7d);
                 secondSkystoneLocation = 4;
             } else {
