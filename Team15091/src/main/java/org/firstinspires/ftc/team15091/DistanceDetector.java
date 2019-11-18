@@ -37,6 +37,10 @@ public class DistanceDetector implements IObjectDetector {
         return detected;
     }
 
+    double getCurrentDistance() {
+        return sensorRange.getDistance(DistanceUnit.CM);
+    }
+
     public void dispose() {
 
     }
