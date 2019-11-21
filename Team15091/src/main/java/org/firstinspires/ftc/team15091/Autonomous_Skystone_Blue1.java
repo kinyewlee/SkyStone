@@ -119,6 +119,7 @@ public class Autonomous_Skystone_Blue1 extends LinearOpMode {
                 }
             }.start();
 
+            //go back to look for 2nd skystone
             robotDriver.gyroDrive(1d, -distanceToSkybridge, 90d, 3.7d, null);
 
             new Thread() {
@@ -188,6 +189,7 @@ public class Autonomous_Skystone_Blue1 extends LinearOpMode {
             }.start();
             robotDriver.gyroTurn(1d, 70d, 0.6d);
 
+            //deliver 2nd skystone
             distanceToSkybridge = 54.5d + ((secondSkystoneLocation) * 9d);
             robot.setDriveZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             robotDriver.gyroDrive(1d, distanceToSkybridge, 90d, 5.5d, null);
@@ -200,7 +202,9 @@ public class Autonomous_Skystone_Blue1 extends LinearOpMode {
                 }
             }.start();
 
+            //park on the line
             robotDriver.gyroDrive(1d, -12d, 90d, 1d, colorDetector);
+
         }
     }
 }

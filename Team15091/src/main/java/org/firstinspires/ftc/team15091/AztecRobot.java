@@ -240,15 +240,16 @@ class AztecRobot {
         motorWinch.setPower(0d);
     }
 
-    void modifyHook() {
+    void modifyHook(Boolean fullToggle) {
         hookDown = !hookDown;
-        double hookPosition = hookDown ? 1d : 0d;
+        double min = fullToggle ? 0d : 0.55d;
+        double hookPosition = hookDown ? min : 1d;
         servoHook.setPosition(hookPosition);
     }
 
     void openClaw() {
         openClaw = !openClaw;
-        double clawPosition = openClaw ? 0.5d : 0d;
+        double clawPosition = openClaw ? 0d : 0.55d;
         servoHand.setPosition(clawPosition);
     }
 

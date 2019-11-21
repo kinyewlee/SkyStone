@@ -42,10 +42,10 @@ public class GamePadHelper {
         powerRR = Range.clip(drive - turn + side, -1.0, 1.0);
 
         if (gamepad.left_bumper) {
-            powerFL *= 0.75d;
-            powerRL *= 0.75d;
-            powerFR *= 0.75d;
-            powerRR *= 0.75d;
+            powerFL *= 0.6d;
+            powerRL *= 0.6d;
+            powerFR *= 0.6d;
+            powerRR *= 0.6d;
         }
 
         // Send calculated power to wheels
@@ -96,7 +96,7 @@ public class GamePadHelper {
         if (gamepad.x) {
             if (xPressed == false) {
                 xPressed = true;
-                robot.modifyHook();
+                robot.modifyHook(gamepad.right_bumper);
             }
         } else {
             xPressed = false;

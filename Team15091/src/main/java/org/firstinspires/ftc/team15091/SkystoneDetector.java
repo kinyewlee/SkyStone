@@ -67,7 +67,9 @@ public class SkystoneDetector implements IObjectDetector {
                     float recognitionWidth = recognition.getRight() - recognitionLeft;
                     float recognitionMid = recognitionLeft + (recognitionWidth / 2L);
 
-                    if (recognition.getLabel() == LABEL_SECOND_ELEMENT && recognitionMid > thresholdMin && recognitionMid < thresholdMax) {
+                    if (recognition.getLabel() == LABEL_SECOND_ELEMENT &&
+                            recognitionMid > thresholdMin &&
+                            recognitionMid < thresholdMax) {
                         visibleMidpoint = recognitionMid;
                         skytoneDetected = true;
                         skytoneRecognitions.add(recognition);

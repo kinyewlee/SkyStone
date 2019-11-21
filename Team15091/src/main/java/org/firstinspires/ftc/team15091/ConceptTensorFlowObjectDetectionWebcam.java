@@ -78,14 +78,16 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                             float recognitionWidth = recognition.getRight() - recognitionLeft;
                             float recognitionMid = recognitionLeft + (recognitionWidth / 2L);
 
-                            telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-                            telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
+                            telemetry.addData(String.format("label (%d)", i), "%s (%.03f)",
+                                    recognition.getLabel(), recognition.getConfidence());
+                            telemetry.addData("  left,top ", "%.03f , %.03f",
                                     recognition.getLeft(), recognition.getTop());
-                            telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
+                            telemetry.addData("  right,bottom ", "%.03f , %.03f",
                                     recognition.getRight(), recognition.getBottom());
-                            telemetry.addData(String.format("  width, mid (%d)", i), "%.03f , %.03f",
+                            telemetry.addData("  width,mid ", "%.03f , %.03f",
                                     recognition.getRight() - recognition.getLeft(),
                                     recognitionMid);
+                            i++;
                         }
                     }
                 }

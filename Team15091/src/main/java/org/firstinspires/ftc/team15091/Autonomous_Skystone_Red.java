@@ -53,6 +53,8 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
                     //open claw for pick up
                     robotDriver.setClaw(ClawPosition.FRONT);
                     robotDriver.setClaw(ClawPosition.OPENED);
+
+                    //lower arm to get ready to pickup
                     robotDriver.moveArm(0.8d, 2d);
                 }
             }.start();
@@ -97,7 +99,7 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
             robotDriver.setClaw(ClawPosition.CLOSED);
             sleep(900L);
 
-            //move arm back
+            //move arm back up while turning
             new Thread() {
                 public void run() {
                     robotDriver.moveArm(0.9d, 1d);
@@ -110,30 +112,34 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
             double distanceToSkybridge = 44d + ((firstSkystoneLocation) * 8.9d);
             robotDriver.gyroDrive(1d, distanceToSkybridge, 270d, 3.8d, null);
 
+            //release skystone
             new Thread() {
                 public void run() {
-                    //release skystone
                     robotDriver.setClaw(ClawPosition.SIDE);
                     robotDriver.setClaw(ClawPosition.OPENED);
                     robotDriver.moveArm(0.5d, 1d);
                 }
             }.start();
 
+            //go back to look for 2nd skystone
             robotDriver.gyroDrive(1d, -distanceToSkybridge, 270d, 3.7d, null);
 
             new Thread() {
                 public void run() {
-                    //pick up 2nd skystone
+                    //get ready to pick up
                     robotDriver.setClaw(ClawPosition.FRONT);
                     robotDriver.setClaw(ClawPosition.OPENED);
                     robotDriver.moveArm(0.7d, 2d);
                 }
             }.start();
 
+            //turn to face skystone side
             robotDriver.gyroTurn(0.8d, 0d, 1.6d);
 
-            //find second skystone
+            //find 2nd skystone
             skystoneFound = false;
+
+            //if the first skytone is on position #3, move directly to the end
             if (firstSkystoneLocation == 2) {
 
                 new Thread() {
@@ -173,9 +179,11 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
                 distanceDetector.reset();
                 robotDriver.gyroDrive(0.3d, 4d, 0d, 1d, distanceDetector);
             } else if (distanceDetector.getCurrentDistance() < 22d) {
+                //move back if too close
                 robotDriver.gyroDrive(0.6d, -2d, 0d, 0.2d, null);
             }
 
+            //pick up 2nd skystone
             new Thread() {
                 public void run() {
                     robotDriver.moveArm(0.4d, 2d);
@@ -192,6 +200,8 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
                     robotDriver.moveArm(0.55d, 1d);
                 }
             }.start();
+
+            //deliver 2nd skystone
             robotDriver.gyroTurn(1d, 300d, 0.6d);
 
             distanceToSkybridge = 56.9d + ((secondSkystoneLocation) * 8.95d);
@@ -207,6 +217,7 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
                 }
             }.start();
 
+            //move back to park on line
             robotDriver.gyroDrive(1d, -12d, 270d, 1d, colorDetector);
         }
     }
