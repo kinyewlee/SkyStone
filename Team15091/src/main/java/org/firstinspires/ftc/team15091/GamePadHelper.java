@@ -9,14 +9,14 @@ public class GamePadHelper {
     private ElapsedTime driveTime;
     private Gamepad gamepad;
     private AztecRobot robot;
-    private boolean xPressed = false, yPressed = false, aPressed = false, bPressed = false;
-    private GamePadOrientation gamePadOrientation;
+    private boolean xPressed = false, yPressed = false, aPressed = false, bPressed = true;
 
-    public GamePadHelper(Gamepad gamepad, AztecRobot aztecRobot, GamePadOrientation gamePadOrientation) {
+    public GamePadHelper(Gamepad gamepad, AztecRobot aztecRobot) {
         this.gamepad = gamepad;
         driveTime = new ElapsedTime();
         robot = aztecRobot;
-        this.gamePadOrientation = gamePadOrientation;
+        robot.modifyHook(false);
+        robot.openClaw();
     }
 
     void processJoystick() {
@@ -26,21 +26,22 @@ public class GamePadHelper {
         // POV Mode uses left stick y to go forward, and left stick x to turn.
         // right stick x to move side way
         // - This uses basic math to combine motions and is easier to drive straight.
-        double drive = Range.scale(-gamepad.left_stick_y - gamepad.right_stick_y, -1d, 1d, -0.9d, 0.9d);
+        double stickY = -gamepad.left_stick_y;
+        //if right bumper is not press, take right stick Y
+        if (!gamepad.right_bumper) {
+            stickY -= gamepad.right_stick_y;
+        }
+
+        double drive = Range.scale(stickY, -1d, 1d, -0.9d, 0.9d);
         double turn = gamepad.left_stick_x;
         double side = gamepad.right_stick_x;
-
-
-        if (gamePadOrientation == GamePadOrientation.REVERSE) {
-            drive *= -1d;
-            side *= -1d;
-        }
 
         powerFL = Range.clip(drive + turn + side, -1.0, 1.0);
         powerRL = Range.clip(drive + turn - side, -1.0, 1.0);
         powerFR = Range.clip(drive - turn - side, -1.0, 1.0);
         powerRR = Range.clip(drive - turn + side, -1.0, 1.0);
 
+        //if left bumper press, slow down movement
         if (gamepad.left_bumper) {
             powerFL *= 0.6d;
             powerRL *= 0.6d;

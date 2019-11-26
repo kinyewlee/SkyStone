@@ -27,7 +27,6 @@ public class Gamepad_Aztec extends LinearOpMode {
         new Thread() {
             public void run() {
                 while (opModeIsActive()) {
-                    telemetry.addData("Arm:", "pos (%.3f)", robot.getArmAngle());
                     telemetry.addData("Heading: ", "%.4f", robot.getHeading());
                     telemetry.update();
                 }

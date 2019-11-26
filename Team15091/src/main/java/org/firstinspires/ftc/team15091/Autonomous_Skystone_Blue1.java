@@ -152,6 +152,7 @@ public class Autonomous_Skystone_Blue1 extends LinearOpMode {
                     skystoneDetector.reset();
                     robotDriver.gyroSlide(0.6d, -11.2d, 0d, 1.6d, null);
                     robotDriver.gyroTurn(0.7d, 0d, 0.5d);
+                    //try to confirm visual 10 times
                     for (int j = 0; j < 10; j++) {
                         if (skystoneDetector.objectDetected()) {
                             secondSkystoneLocation = i;

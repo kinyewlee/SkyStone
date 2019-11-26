@@ -49,12 +49,17 @@ class AztecRobot {
     static final int WINCH_MAX = 5000;
     static final double WINCH_SPEED = 0.8d;
 
-    boolean hookDown = false;
+    boolean hookDown;
     boolean turnClaw = false;
-    boolean openClaw = false;
+    boolean openClaw;
     private int beepSoundID;
 
-    AztecRobot(HardwareMap ahwMap) {
+    AztecRobot(HardwareMap ahwMap)
+    {
+        this(ahwMap, true);
+    }
+
+    AztecRobot(HardwareMap ahwMap, Boolean needIMU) {
         // Save reference to Hardware map
         hwMap = ahwMap;
         motorFL = hwMap.dcMotor.get("motor_0");
@@ -85,6 +90,17 @@ class AztecRobot {
 
         setDrivePower(0, 0, 0, 0);
 
+        if (needIMU) {
+            initIMU();
+        }
+
+        beepSoundID = hwMap.appContext.getResources().getIdentifier("beep", "raw", hwMap.appContext.getPackageName());
+
+        tts = new AndroidTextToSpeech();
+        tts.initialize();
+    }
+
+    private void initIMU() {
         // Set up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
         // provide positional information.
@@ -105,12 +121,6 @@ class AztecRobot {
         while (!imu.isGyroCalibrated()) {
             Thread.yield();
         }
-
-        hookDown = false;
-        beepSoundID = hwMap.appContext.getResources().getIdentifier("beep", "raw", hwMap.appContext.getPackageName());
-
-        tts = new AndroidTextToSpeech();
-        tts.initialize();
     }
 
     double getRemainingDistance() {

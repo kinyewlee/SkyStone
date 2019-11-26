@@ -15,9 +15,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class Hardware_Aztec {
-    DcMotor leftDrive, rightDrive, motorArm;
-    AnalogInput sensorArm;
-    Servo servoWrist, servoHand, servoClamp;
+    DcMotor motorFL, motorFR, motorRL, motorRR;
+    Servo servoArm;
     BNO055IMU imu;
 
     static final double ARM_MAX = 2.48d;
@@ -30,20 +29,19 @@ public class Hardware_Aztec {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        leftDrive = hardwareMap.dcMotor.get("left_drive");
-        rightDrive = hardwareMap.dcMotor.get("right_drive");
+        motorFL = hardwareMap.dcMotor.get("motor_1");
+        motorRL = hardwareMap.dcMotor.get("motor_0");
+        motorFR = hardwareMap.dcMotor.get("motor_3");
+        motorRR = hardwareMap.dcMotor.get("motor_2");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        leftDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightDrive.setDirection(DcMotor.Direction.REVERSE);
+        motorFL.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorRL.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorFR.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorRR.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        motorArm = hardwareMap.dcMotor.get("motor_arm");
-        motorArm.setDirection(DcMotor.Direction.REVERSE);
-        sensorArm = hardwareMap.analogInput.get("sensor_arm");
-        servoWrist = hardwareMap.servo.get("servo_wrist");
-        servoHand = hardwareMap.servo.get("servo_hand");
-        servoClamp = hardwareMap.servo.get("servo_clamp");
+        servoArm = hardwareMap.servo.get("servo_arm");
 
         // Set up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
@@ -67,50 +65,15 @@ public class Hardware_Aztec {
         }
     }
 
-    void setArmPower(double powerArm) {
-        double currentAngle = getArmAngle();
-        if (powerArm < 0d && currentAngle < ARM_MAX) { //move arm out
-            double gap = Math.abs(ARM_MAX - currentAngle);
-            double error = Range.scale(gap, 0d, 1.9d, 0d, 1d);
-            double suggestedPower = powerArm * error;
-            double finalPower = Math.min(suggestedPower, powerArm);
-            motorArm.setPower(finalPower);
-        } else if (powerArm > 0d && currentAngle > ARM_MIN) { //move arm back
-            double gap = Math.abs(currentAngle - ARM_MIN);
-            double error = Range.clip(gap, 0d, 1d);
-            double suggestedPower = powerArm * error;
-            double finalPower = Math.max(suggestedPower, powerArm);
-            motorArm.setPower(finalPower);
-        } else {
-            motorArm.setPower(0d);
-        }
-
-
-    }
-
-    void setPower(double leftPower, double rightPower) {
-        leftDrive.setPower(leftPower);
-        rightDrive.setPower(rightPower);
-    }
-
-    double getArmAngle() {
-        return sensorArm.getVoltage();
+    public void setDrivePower(double powerFL, double powerFR, double powerRL, double powerRR) {
+        motorFL.setPower(powerFL);
+        motorRR.setPower(powerRR);
+        motorRL.setPower(powerRL);
+        motorFR.setPower(powerFR);
     }
 
     double getHeading() {
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         return (double) AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle);
-    }
-
-    void turnClaw() {
-        turnClaw = !turnClaw;
-        double wristPosition = turnClaw ? 1d : 0d;
-        servoHand.setPosition(wristPosition);
-    }
-
-    void toggleClaw() {
-        openClaw = !openClaw;
-        double clawPosition = openClaw ? 0.52d : 0d;
-        servoClamp.setPosition(clawPosition);
     }
 }

@@ -52,33 +52,19 @@ import com.qualcomm.robotcore.util.Range;
 //@Disabled
 public class GamePad extends LinearOpMode {
 
-    // Declare OpMode members.
-    private ElapsedTime runtime = new ElapsedTime();
-
     @Override
     public void runOpMode() {
 
-        final AztecRobot myRobot = new AztecRobot(hardwareMap);
+        final AztecRobot myRobot = new AztecRobot(hardwareMap, false);
 
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        runtime.reset();
 
-        new Thread() {
-            public void run() {
-                while (opModeIsActive()) {
-                    telemetry.addData("Arm:", "pos (%.3f)", myRobot.getArmAngle());
-                    telemetry.addData("Heading: ", "%.4f", myRobot.getHeading());
-                    telemetry.update();
-                }
-            }
-        }.start();
-
-        GamePadHelper gamePadHelper1 = new GamePadHelper(gamepad1, myRobot, GamePadOrientation.FORWARD);
-        GamePadHelper gamePadHelper2 = new GamePadHelper(gamepad2, myRobot, GamePadOrientation.REVERSE);
+        GamePadHelper gamePadHelper1 = new GamePadHelper(gamepad1, myRobot);
+        GamePadHelper gamePadHelper2 = new GamePadHelper(gamepad2, myRobot);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
