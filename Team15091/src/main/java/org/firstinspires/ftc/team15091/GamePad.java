@@ -52,6 +52,19 @@ import com.qualcomm.robotcore.util.Range;
 //@Disabled
 public class GamePad extends LinearOpMode {
 
+    private class TelemetryUpdate implements Runnable {
+        private  AztecRobot robot;
+        TelemetryUpdate(AztecRobot robot) {
+            this.robot =robot;
+        }
+
+        @Override
+        public void run() {
+            telemetry.addData("Heading", "%.4f", robot.getHeading());
+            telemetry.update();
+        }
+    }
+
     @Override
     public void runOpMode() {
 
@@ -62,6 +75,8 @@ public class GamePad extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
+
+        new Thread(new TelemetryUpdate(myRobot)).start();
 
         GamePadHelper gamePadHelper1 = new GamePadHelper(gamepad1, myRobot);
         GamePadHelper gamePadHelper2 = new GamePadHelper(gamepad2, myRobot);

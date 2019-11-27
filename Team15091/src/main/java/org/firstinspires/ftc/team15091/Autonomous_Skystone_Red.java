@@ -21,6 +21,8 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
 
         robot.beep();
 
+
+
         // Wait for the game to start (driver presses PLAY)
         // Abort this loop is started or stopped.
         while (!(isStarted() || isStopRequested())) {
@@ -35,17 +37,16 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
             idle();
         }
 
-        new Thread() {
-            public void run() {
-                while (opModeIsActive()) {
-                    telemetry.addData("Skystone:", "mid (%.3f)", skystoneDetector.visibleMidpoint);
-                    telemetry.addData("Distance:", "%s (%.3f)", distanceDetector.objectDetected(), distanceDetector.getCurrentDistance());
-                    telemetry.addData("Heading: ", "%.4f", robot.getHeading());
-                    telemetry.addData("Color:", colorDetector.objectDetected());
-                    telemetry.update();
-                }
+        Runnable telemetryUpdate = () -> {
+            while (opModeIsActive()) {
+                telemetry.addData("Skystone:", "mid (%.3f)", skystoneDetector.visibleMidpoint);
+                telemetry.addData("Distance:", "%s (%.3f)", distanceDetector.objectDetected(), distanceDetector.getCurrentDistance());
+                telemetry.addData("Heading: ", "%.4f", robot.getHeading());
+                telemetry.addData("Color:", colorDetector.objectDetected());
+                telemetry.update();
             }
-        }.start();
+        };
+        new Thread(telemetryUpdate).start();
 
         if (opModeIsActive()) {
             new Thread() {
@@ -122,7 +123,7 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
             }.start();
 
             //go back to look for 2nd skystone
-            robotDriver.gyroDrive(1d, -distanceToSkybridge, 270d, 3.7d, null);
+            robotDriver.gyroDrive(1d, -distanceToSkybridge, 270d, 3.6d, null);
 
             new Thread() {
                 public void run() {
@@ -134,7 +135,7 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
             }.start();
 
             //turn to face skystone side
-            robotDriver.gyroTurn(0.8d, 0d, 1.6d);
+            robotDriver.gyroTurn(0.75d, 0d, 1.5d);
 
             //find 2nd skystone
             skystoneFound = false;
@@ -157,7 +158,7 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
                 //find second skystone from 3 to 5
                 for (int i = firstSkystoneLocation; i < 4; i++) {
                     skystoneDetector.reset();
-                    robotDriver.gyroSlide(0.6d, 10.85d, 0d, 1.6d, null);
+                    robotDriver.gyroSlide(0.6d, 10.82d, 0d, 1.6d, null);
                     robotDriver.gyroTurn(0.7d, 0d, 0.5d);
                     for (int j = 0; j < 10; j++) {
                         if (skystoneDetector.objectDetected()) {
@@ -196,15 +197,15 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
             //move arm back
             new Thread() {
                 public void run() {
-                    robotDriver.moveArm(0.8d, 1d);
-                    robotDriver.moveArm(0.55d, 1d);
+                    robotDriver.moveArm(0.9d, 1d);
+                    robotDriver.moveArm(0.6d, 1d);
                 }
             }.start();
 
             //deliver 2nd skystone
             robotDriver.gyroTurn(1d, 300d, 0.6d);
 
-            distanceToSkybridge = 56.9d + ((secondSkystoneLocation) * 8.95d);
+            distanceToSkybridge = 57.3d + ((secondSkystoneLocation) * 8.95d);
             robot.setDriveZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             double skybrigdeAngle = secondSkystoneLocation == 4 ? 267d : 269d;
             robotDriver.gyroDrive(1d, distanceToSkybridge, skybrigdeAngle, 6d, null);
