@@ -21,44 +21,37 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
 
         robot.beep();
 
-
-
         // Wait for the game to start (driver presses PLAY)
         // Abort this loop is started or stopped.
         while (!(isStarted() || isStopRequested())) {
             telemetry.addData(">", "Press Play to start op mode");
             skystoneDetector.reset();
             skystoneDetector.objectDetected();
-            telemetry.addData("Skystone:", "mid (%.3f)", skystoneDetector.visibleMidpoint);
-            telemetry.addData("Distance:", distanceDetector.objectDetected());
-            telemetry.addData("Heading: ", "%.4f", robot.getHeading());
-            telemetry.addData("Color:", colorDetector.objectDetected());
+            telemetry.addData("Skystone", "mid (%.3f)", skystoneDetector.visibleMidpoint);
+            telemetry.addData("Distance", distanceDetector.objectDetected());
+            telemetry.addData("Heading", "%.4f", robot.getHeading());
+            telemetry.addData("Color", colorDetector.objectDetected());
             telemetry.update();
             idle();
         }
 
-        Runnable telemetryUpdate = () -> {
+        new Thread(() -> {
             while (opModeIsActive()) {
-                telemetry.addData("Skystone:", "mid (%.3f)", skystoneDetector.visibleMidpoint);
-                telemetry.addData("Distance:", "%s (%.3f)", distanceDetector.objectDetected(), distanceDetector.getCurrentDistance());
-                telemetry.addData("Heading: ", "%.4f", robot.getHeading());
-                telemetry.addData("Color:", colorDetector.objectDetected());
+                telemetry.addData("Skystone", "mid (%.3f)", skystoneDetector.visibleMidpoint);
+                telemetry.addData("Distance", distanceDetector.objectDetected());
+                telemetry.addData("Heading", "%.4f", robot.getHeading());
+                telemetry.addData("Color", colorDetector.objectDetected());
                 telemetry.update();
             }
-        };
-        new Thread(telemetryUpdate).start();
+        }).start();
 
         if (opModeIsActive()) {
-            new Thread() {
-                public void run() {
-                    //open claw for pick up
-                    robotDriver.setClaw(ClawPosition.FRONT);
-                    robotDriver.setClaw(ClawPosition.OPENED);
+            //open claw for pick up
+            robotDriver.setClaw(ClawPosition.FRONT);
+            robotDriver.setClaw(ClawPosition.OPENED);
 
-                    //lower arm to get ready to pickup
-                    robotDriver.moveArm(0.8d, 2d);
-                }
-            }.start();
+            //lower arm to get ready to pickup
+            robotDriver.setArmAngle(0.8d, 2d);
 
             //move forward to start scan first skystone
             robotDriver.gyroDrive(1d, 21.3d, 0d, 1.5d, null);

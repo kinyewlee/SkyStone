@@ -250,6 +250,12 @@ public class RobotDriver {
         robot.setArmPower(0d);
     }
 
+    void setArmAngle(double armAngle, double timeoutS) {
+        new Thread(() -> {
+            moveArm(armAngle, timeoutS);
+        }).start();
+    }
+
     void setClaw(ClawPosition clawPosition) {
         switch (clawPosition) {
             case CLOSED:

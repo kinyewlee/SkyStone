@@ -27,25 +27,24 @@ public class Autonomous_Skystone_Blue1 extends LinearOpMode {
             telemetry.addData(">", "Press Play to start op mode");
             skystoneDetector.reset();
             skystoneDetector.objectDetected();
-            telemetry.addData("Skystone:", "mid (%.3f)", skystoneDetector.visibleMidpoint);
-            telemetry.addData("Distance:", distanceDetector.objectDetected());
-            telemetry.addData("Heading: ", "%.4f", robot.getHeading());
-            telemetry.addData("Color:", colorDetector.objectDetected());
+            telemetry.addData("Skystone", "mid (%.3f)", skystoneDetector.visibleMidpoint);
+            telemetry.addData("Distance", distanceDetector.objectDetected());
+            telemetry.addData("Heading", "%.4f", robot.getHeading());
+            telemetry.addData("Color", colorDetector.objectDetected());
             telemetry.update();
             idle();
         }
 
-        new Thread() {
-            public void run() {
-                while (opModeIsActive()) {
-                    telemetry.addData("Skystone:", "mid (%.3f)", skystoneDetector.visibleMidpoint);
-                    telemetry.addData("Distance:", distanceDetector.objectDetected());
-                    telemetry.addData("Heading: ", "%.4f", robot.getHeading());
-                    telemetry.addData("Color:", colorDetector.objectDetected());
-                    telemetry.update();
-                }
+        new Thread(() -> {
+            while (opModeIsActive()) {
+                telemetry.addData("Skystone", "mid (%.3f)", skystoneDetector.visibleMidpoint);
+                telemetry.addData("Distance", distanceDetector.objectDetected());
+                telemetry.addData("Heading", "%.4f", robot.getHeading());
+                telemetry.addData("Color", colorDetector.objectDetected());
+                telemetry.addData("Arm", "%.4f", robot.getArmAngle());
+                telemetry.update();
             }
-        }.start();
+        }).start();
 
         if (opModeIsActive()) {
             new Thread() {
