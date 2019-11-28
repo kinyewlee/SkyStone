@@ -187,7 +187,7 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
             robotDriver.setArmAngle(0.5d, 1d);
 
             //move back to park on line
-            robotDriver.gyroDrive(1d, -12d, 270d, 1d, colorDetector);
+            robotDriver.gyroDrive(1d, -14d, 270d, 1d, colorDetector);
         }
     }
 }
