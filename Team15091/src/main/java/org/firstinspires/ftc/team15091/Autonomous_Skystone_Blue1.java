@@ -47,14 +47,10 @@ public class Autonomous_Skystone_Blue1 extends LinearOpMode {
         }).start();
 
         if (opModeIsActive()) {
-            new Thread() {
-                public void run() {
-                    //open claw for pick up
-                    robotDriver.setClaw(ClawPosition.FRONT);
-                    robotDriver.setClaw(ClawPosition.OPENED);
-                    robotDriver.moveArm(0.8d, 2d);
-                }
-            }.start();
+            //open claw for pick up
+            robotDriver.setClaw(ClawPosition.FRONT);
+            robotDriver.setClaw(ClawPosition.OPENED);
+            robotDriver.setArmAngle(0.8d, 2d);
 
             //move forward to start scan first skystone
             robotDriver.gyroDrive(1d, 20d, 0d, 1.5d, null);
@@ -87,60 +83,41 @@ public class Autonomous_Skystone_Blue1 extends LinearOpMode {
             robotDriver.gyroDrive(0.3d, 5d, 0d, 1.5d, distanceDetector);
 
             //pick up skystone
-            new Thread() {
-                public void run() {
-                    robotDriver.moveArm(0.4d, 2d);
-                }
-            }.start();
+            robotDriver.setArmAngle(0.4d, 2d);
             sleep(1100L);
             robotDriver.setClaw(ClawPosition.CLOSED);
             sleep(900L);
 
             //move arm back
-            new Thread() {
-                public void run() {
-                    robotDriver.moveArm(0.85d, 1d);
-                    robotDriver.moveArm(0.55d, 1d);
-                }
-            }.start();
+            new Thread(() -> {
+                robotDriver.moveArm(0.85d, 1d);
+                robotDriver.moveArm(0.55d, 1d);
+            }).start();
             robotDriver.gyroTurn(0.85d, 90d, 1.4d);
 
             //deliver first skystone under skybridge
             double distanceToSkybridge = 44d + ((firstSkystoneLocation) * 8.9d);
             robotDriver.gyroDrive(1d, distanceToSkybridge, 90d, 3.8d, null);
 
-            new Thread() {
-                public void run() {
-                    //release skystone
-                    robotDriver.setClaw(ClawPosition.SIDE);
-                    robotDriver.setClaw(ClawPosition.OPENED);
-                    robotDriver.moveArm(0.5d, 1d);
-                }
-            }.start();
+            //release skystone
+            robotDriver.setClaw(ClawPosition.SIDE);
+            robotDriver.setClaw(ClawPosition.OPENED);
+            robotDriver.setArmAngle(0.5d, 1d);
 
             //go back to look for 2nd skystone
             robotDriver.gyroDrive(1d, -distanceToSkybridge, 90d, 3.7d, null);
 
-            new Thread() {
-                public void run() {
-                    //pick up 2nd skystone
-                    robotDriver.setClaw(ClawPosition.FRONT);
-                    robotDriver.setClaw(ClawPosition.OPENED);
-                    robotDriver.moveArm(0.7d, 2d);
-                }
-            }.start();
+            //pick up 2nd skystone
+            robotDriver.setClaw(ClawPosition.FRONT);
+            robotDriver.setClaw(ClawPosition.OPENED);
+            robotDriver.setArmAngle(0.7d, 2d);
 
             robotDriver.gyroTurn(0.8d, 0d, 1.6d);
 
             //find second skystone
             skystoneFound = false;
             if (firstSkystoneLocation == 2) {
-
-                new Thread() {
-                    public void run() {
-                        robotDriver.moveArm(0.5d, 1d);
-                    }
-                }.start();
+                robotDriver.setArmAngle(0.5d, 1d);
 
                 skystoneDetector.reset();
                 robotDriver.gyroSlide(0.6d, -33d, 0d, 2d, touchDetector);
@@ -171,22 +148,16 @@ public class Autonomous_Skystone_Blue1 extends LinearOpMode {
             distanceDetector.reset();
             robotDriver.gyroDrive(0.3d, 4d, 0d, 1d, distanceDetector);
 
-            new Thread() {
-                public void run() {
-                    robotDriver.moveArm(0.4d, 2d);
-                }
-            }.start();
+            robotDriver.setArmAngle(0.4d, 2d);
             sleep(1000L);
             robotDriver.setClaw(ClawPosition.CLOSED);
             sleep(900L);
 
             //move arm back
-            new Thread() {
-                public void run() {
-                    robotDriver.moveArm(0.8d, 1d);
-                    robotDriver.moveArm(0.55d, 1d);
-                }
-            }.start();
+            new Thread(() -> {
+                robotDriver.moveArm(0.8d, 1d);
+                robotDriver.moveArm(0.55d, 1d);
+            }).start();
             robotDriver.gyroTurn(1d, 70d, 0.6d);
 
             //deliver 2nd skystone
@@ -194,17 +165,12 @@ public class Autonomous_Skystone_Blue1 extends LinearOpMode {
             robot.setDriveZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             robotDriver.gyroDrive(1d, distanceToSkybridge, 90d, 5.5d, null);
 
-            new Thread() {
-                public void run() {
-                    //release skystone
-                    robotDriver.setClaw(ClawPosition.OPENED);
-                    robotDriver.moveArm(0.5d, 1d);
-                }
-            }.start();
+            //release skystone
+            robotDriver.setClaw(ClawPosition.OPENED);
+            robotDriver.setArmAngle(0.5d, 1d);
 
             //park on the line
             robotDriver.gyroDrive(1d, -12d, 90d, 1d, colorDetector);
-
         }
     }
 }
