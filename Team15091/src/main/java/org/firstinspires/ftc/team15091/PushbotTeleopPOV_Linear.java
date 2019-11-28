@@ -29,33 +29,35 @@
 
 package org.firstinspires.ftc.team15091;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-
 /**
- * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
- * the autonomous or the teleop period of an FTC match. The names of OpModes appear on the menu
- * of the FTC Driver Station. When an selection is made from the menu, the corresponding OpMode
- * class is instantiated on the Robot Controller and executed.
+ * This OpMode uses the common Pushbot hardware class to define the devices on the robot.
+ * All device access is managed through the HardwarePushbot class.
+ * The code is structured as a LinearOpMode
  * <p>
- * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
- * It includes all the skeletal structure that all linear OpModes contain.
+ * This particular OpMode executes a POV Game style Teleop for a PushBot
+ * In this mode the left stick moves the robot FWD and back, the Right stick turns left and right.
+ * It raises and lowers the claw using the Gampad Y and A buttons respectively.
+ * It also opens and closes the claws slowly using the left and right Bumper buttons.
  * <p>
  * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
 @TeleOp(name = "GamePad", group = "Linear Opmode")
-//@Disabled
-public class GamePad extends LinearOpMode {
+//Disabled
+public class PushbotTeleopPOV_Linear extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
-        final AztecRobot myRobot = new AztecRobot(hardwareMap, false);
+        final AztecRobot robot = new AztecRobot(hardwareMap, false);
+        GamePadHelper gamePadHelper1 = new GamePadHelper(gamepad1, robot);
+        GamePadHelper gamePadHelper2 = new GamePadHelper(gamepad2, robot);
 
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
@@ -63,18 +65,19 @@ public class GamePad extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        GamePadHelper gamePadHelper1 = new GamePadHelper(gamepad1, myRobot);
-        GamePadHelper gamePadHelper2 = new GamePadHelper(gamepad2, myRobot);
-
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
+        new Thread(() -> {
+            while (opModeIsActive()) {
+                telemetry.addData("Arm", "%.4f", robot.getArmAngle());
+                telemetry.update();
+            }
+        }
+        ).start();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             gamePadHelper1.processJoystick();
             gamePadHelper1.processXYAB();
 
-            //gamePadHelper2.processDpad();
             gamePadHelper2.processJoystick();
             gamePadHelper2.processXYAB();
 
@@ -88,16 +91,15 @@ public class GamePad extends LinearOpMode {
             } else if (gamepad2.right_trigger > 0d) { //Arm going down
                 powerArm = -Range.clip(gamepad2.right_trigger, 0d, 1d);
             }
-            myRobot.setArmPower(powerArm);
+            robot.setArmPower(powerArm);
 
             if (gamepad1.dpad_up || gamepad2.dpad_up) {
-                myRobot.winchUp();
+                robot.winchUp();
             } else if (gamepad1.dpad_down || gamepad2.dpad_down) {
-                myRobot.winchDown();
+                robot.winchDown();
             } else {
-                myRobot.winchStop();
+                robot.winchStop();
             }
         }
     }
 }
-
