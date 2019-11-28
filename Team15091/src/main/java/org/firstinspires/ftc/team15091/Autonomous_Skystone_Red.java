@@ -109,7 +109,7 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
             robotDriver.gyroTurn(0.85d, 270d, 1.4d);
 
             //deliver first skystone under skybridge
-            double distanceToSkybridge = 44d + ((firstSkystoneLocation) * 8.9d);
+            double distanceToSkybridge = 42.7d + ((firstSkystoneLocation) * 8.9d);
             robotDriver.gyroDrive(1d, distanceToSkybridge, 270d, 3.8d, null);
 
             //release skystone
@@ -122,7 +122,7 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
             }.start();
 
             //go back to look for 2nd skystone
-            robotDriver.gyroDrive(1d, -distanceToSkybridge, 270d, 3.7d, null);
+            robotDriver.gyroDrive(1d, -distanceToSkybridge, 270d, 3.5d, null);
 
             new Thread() {
                 public void run() {
@@ -134,7 +134,7 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
             }.start();
 
             //turn to face skystone side
-            robotDriver.gyroTurn(0.8d, 0d, 1.6d);
+            robotDriver.gyroTurn(0.8d, 0d, 1.5d);
 
             //find 2nd skystone
             skystoneFound = false;
@@ -157,7 +157,7 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
                 //find second skystone from 3 to 5
                 for (int i = firstSkystoneLocation; i < 4; i++) {
                     skystoneDetector.reset();
-                    robotDriver.gyroSlide(0.6d, 10.85d, 0d, 1.6d, null);
+                    robotDriver.gyroSlide(0.6d, 10.84d, 0d, 1.6d, null);
                     robotDriver.gyroTurn(0.7d, 0d, 0.5d);
                     for (int j = 0; j < 10; j++) {
                         if (skystoneDetector.objectDetected()) {
@@ -204,7 +204,7 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
             //deliver 2nd skystone
             robotDriver.gyroTurn(1d, 300d, 0.6d);
 
-            distanceToSkybridge = 56.9d + ((secondSkystoneLocation) * 8.95d);
+            distanceToSkybridge = 57.4d + ((secondSkystoneLocation) * 8.95d);
             robot.setDriveZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             double skybrigdeAngle = secondSkystoneLocation == 4 ? 267d : 269d;
             robotDriver.gyroDrive(1d, distanceToSkybridge, skybrigdeAngle, 6d, null);
