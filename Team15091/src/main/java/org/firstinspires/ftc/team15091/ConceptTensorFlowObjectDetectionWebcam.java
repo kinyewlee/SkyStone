@@ -37,6 +37,7 @@ import com.vuforia.Vuforia;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
@@ -58,7 +59,7 @@ import java.util.List;
 public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
     @Override
     public void runOpMode() {
-        SkystoneDetector skystoneDetector = new SkystoneDetector(this, 180L, 550L);
+        SkystoneDetector skystoneDetector = new SkystoneDetector(this, 0L, 800L);
 
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
@@ -85,8 +86,9 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                             telemetry.addData("  right,bottom ", "%.03f , %.03f",
                                     recognition.getRight(), recognition.getBottom());
                             telemetry.addData("  width,mid ", "%.03f , %.03f",
-                                    recognition.getRight() - recognition.getLeft(),
-                                    recognitionMid);
+                                    recognitionWidth, recognitionMid);
+                            telemetry.addData("  angle ", "%.03f",
+                                    recognition.estimateAngleToObject(AngleUnit.DEGREES));
                             i++;
                         }
                     }

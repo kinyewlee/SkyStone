@@ -1,23 +1,59 @@
 package org.firstinspires.ftc.team15091;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "Skystone: Red", group = "Skystone")
-public class Autonomous_Skystone_Red extends LinearOpMode {
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+
+import java.util.List;
+
+
+@Autonomous(name = "Skystone: Red 2", group = "Skystone")
+@Disabled
+public class Autonomous_Skystone_Red2 extends LinearOpMode {
+
+    int GetSkystonePosition(List<Recognition> skytoneRecognitions) {
+        int position = 1;
+        float minWidth = 1000L;
+
+        for (Recognition recognition : skytoneRecognitions) {
+            //if (recognition.getWidth() < minWidth) {
+            //  minWidth = recognition.getWidth();
+            float recognitionLeft = Math.max(recognition.getLeft(), 0L);
+            float recognitionWidth = recognition.getRight() - recognitionLeft;
+            float recognitionMid = recognitionLeft + (recognitionWidth / 2L);
+            double angle = recognition.estimateAngleToObject(AngleUnit.DEGREES);
+
+            if (recognitionMid > 530L || angle > 3.8d) {
+                position = 2;
+            } else if (recognitionMid < 340L || angle < -4d) {
+                position = 0;
+            } else if (angle < 20L) {
+                position = 1;
+            }
+
+            telemetry.addData("Skystone", "mid (%.3f) ang (%.3f) %d", recognitionMid, angle, position);
+            //}
+        }
+        return position;
+    }
+
     @Override
     public void runOpMode() {
         final AztecRobot robot = new AztecRobot(hardwareMap);
         robot.resetDrive();
 
         final RobotDriver robotDriver = new RobotDriver(robot, this);
-        final SkystoneDetector skystoneDetector = new SkystoneDetector(this, 180L, 550L);
+        final SkystoneDetector skystoneDetector = new SkystoneDetector(this, 0L, 1000L);
         final DistanceDetector distanceDetector = new DistanceDetector(robot.sensorRange, 29.3d, 100d);
         final ColorDetector colorDetector = new ColorDetector(robot.sensorColor);
-        TouchDetector touchDetector = new TouchDetector(robot.digitalLeft);
+        TouchDetector touchDetector = new TouchDetector(robot.digitalRight);
 
-        int firstSkystoneLocation = 2, secondSkystoneLocation = 4;
+        int firstSkystoneLocation = 1, secondSkystoneLocation = 4;
 
         robot.beep();
 
@@ -25,9 +61,6 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
         // Abort this loop is started or stopped.
         while (!(isStarted() || isStopRequested())) {
             telemetry.addData(">", "Press Play to start op mode");
-            skystoneDetector.reset();
-            skystoneDetector.objectDetected();
-            telemetry.addData("Skystone", "mid (%.3f)", skystoneDetector.visibleMidpoint);
             telemetry.addData("Distance", distanceDetector.objectDetected());
             telemetry.addData("Heading", "%.4f", robot.getHeading());
             telemetry.addData("Color", colorDetector.objectDetected());
@@ -37,7 +70,7 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
 
         new Thread(() -> {
             while (opModeIsActive()) {
-                telemetry.addData("Skystone", "mid (%.3f)", skystoneDetector.visibleMidpoint);
+                telemetry.addData("Skystone", "mid (%.3f) ang (%.3f)", skystoneDetector.visibleMidpoint, skystoneDetector.visibleAngle);
                 telemetry.addData("Distance", distanceDetector.objectDetected());
                 telemetry.addData("Heading", "%.4f", robot.getHeading());
                 telemetry.addData("Color", colorDetector.objectDetected());
@@ -50,31 +83,29 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
             //open claw for pick up
             robotDriver.setClaw(ClawPosition.FRONT);
             robotDriver.setClaw(ClawPosition.OPENED);
-
-            //lower arm to get ready to pickup
             robotDriver.setArmAngle(0.8d, 2d);
 
             //move forward to start scan first skystone
-            robotDriver.gyroDrive(1d, 21.3d, 0d, 1.5d, null);
+            robotDriver.gyroDrive(1d, 12d, 0d, 1.5d, null);
 
-            sleep(20L);
+            skystoneDetector.objectDetected();
+            if (skystoneDetector.visibleMidpoint < 200L || skystoneDetector.visibleAngle < -2d) {
+                firstSkystoneLocation = 2;
+            } else if (skystoneDetector.visibleMidpoint > 500L || skystoneDetector.visibleAngle > 9d) {
+                firstSkystoneLocation = 0;
+            }
 
-            //start looking for first skystone
-            boolean skystoneFound = false;
-            //find first skystone from 1 to 3
-            for (int i = 0; i < 3; i++) {
-                skystoneDetector.reset();
-                robotDriver.gyroSlide(0.6d, i == 0 ? 16d : 12.2d, 0d, 1.6d, null);
-                robotDriver.gyroTurn(0.7d, 0d, 0.5d);
-                for (int j = 0; j < 10; j++) {
-                    if (skystoneDetector.objectDetected()) {
-                        firstSkystoneLocation = i;
-                        skystoneFound = true;
-                        break;
-                    }
-                    sleep(10L);
-                }
-                if (skystoneFound) break;
+            robotDriver.gyroDrive(1d, 8d, 0d, 1.5d, null);
+
+            if (firstSkystoneLocation == 0) {
+                firstSkystoneLocation = 0;
+                robotDriver.gyroSlide(0.6d, -10.7d, 0d, 1.6d, null);
+                robotDriver.gyroTurn(0.7d, 0d, 0.6d);
+
+            } else if (firstSkystoneLocation == 2) {
+                firstSkystoneLocation = 2;
+                robotDriver.gyroSlide(0.6d, 10.7d, 0d, 1.6d, null);
+                robotDriver.gyroTurn(0.7d, 0d, 0.6d);
             }
 
             //adjust to pickup first skystone in front
@@ -119,7 +150,7 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
             robotDriver.gyroTurn(0.75d, 0d, 1.5d);
 
             //find 2nd skystone
-            skystoneFound = false;
+            boolean skystoneFound = false;
 
             //if the first skytone is on position #3, move directly to the end
             if (firstSkystoneLocation == 2) {
@@ -127,9 +158,9 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
                 robotDriver.setArmAngle(0.5d, 1d);
 
                 skystoneDetector.reset();
-                robotDriver.gyroSlide(0.6d, 31d, 0d, 2d, touchDetector);
+                robotDriver.gyroSlide(0.6d, 28d, 0d, 2d, touchDetector);
                 robotDriver.gyroDrive(0.6d, -2d, 15d, 0.2d, null);
-                robotDriver.gyroTurn(0.8d, 15d, 0.5d);
+                robotDriver.gyroTurn(0.7d, 12d, 0.5d);
                 secondSkystoneLocation = 4;
             } else {
                 //find second skystone from 3 to 5
@@ -189,7 +220,5 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
             //move back to park on line
             robotDriver.gyroDrive(1d, -14d, 270d, 1d, colorDetector);
         }
-
-        skystoneDetector.dispose();
     }
 }
