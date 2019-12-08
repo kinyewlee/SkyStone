@@ -36,7 +36,7 @@ public class RobotDriver {
                 robot.servoHook.setPosition(1d);
                 break;
             case MIDDLE:
-                robot.servoHook.setPosition(0.6d);
+                robot.servoHook.setPosition(0.55d);
                 break;
         }
 

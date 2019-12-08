@@ -13,7 +13,7 @@ public class Autonomous_Skystone_Red_Foundation extends LinearOpMode {
         robot.resetDrive();
 
         RobotDriver robotDriver = new RobotDriver(robot, this);
-        DistanceDetector distanceDetector = new DistanceDetector(robot.sensorRange, 8d, 90d);
+        DistanceDetector distanceDetector = new DistanceDetector(robot.sensorRange, 16d, 90d);
         ColorDetector colorDetector = new ColorDetector(robot.sensorColor);
         telemetry.addData(">", "Press Play to start op mode");
         Telemetry.Item headingItem = telemetry.addData("Heading: ", "%.4f", robot.getHeading());
@@ -30,7 +30,8 @@ public class Autonomous_Skystone_Red_Foundation extends LinearOpMode {
         }
 
         if (opModeIsActive()) {
-            robotDriver.setHook(HookPosition.UP);
+            robotDriver.setHook(HookPosition.MIDDLE);
+            robotDriver.setArmAngle(2.95d, 1d);
 
             //move to foundation
             robotDriver.gyroDrive(0.9d, -24d, 0d, 2d, null);
@@ -45,20 +46,22 @@ public class Autonomous_Skystone_Red_Foundation extends LinearOpMode {
             robotDriver.gyroDrive(0.9d, 18d, 0d, 2d, null);
             robotDriver.gyroSlide(0.9d, -24d, 0d, 2d, null);
             robotDriver.gyroTurn(0.9d, 270d, 2d);
-            robotDriver.gyroDrive(0.9d, -20d, 270d, 2d, null);
+            robotDriver.gyroDrive(0.9d, -16d, 270d, 2d, null);
 
             //detach foundation
             robotDriver.setHook(HookPosition.UP);
             sleep(200L);
 
             //move under skybridge
-            robotDriver.gyroSlide(0.9d, 25d, 270d, 2d, null);
+            robotDriver.gyroSlide(0.9d, 25d, 270d, 3d, null);
 
             //if another robot blocking under skybridge stop
             boolean stepFinish = robotDriver.gyroDrive(0.4d, 36d, 270d, 4d, distanceDetector);
-            if (stepFinish) {
-                robotDriver.gyroDrive(0.4d, 16d, 270d, 2d, colorDetector);
+            if (!stepFinish) {
+                robotDriver.gyroSlide(0.4d, -30d, 270d, 3d, null);
             }
+
+            robotDriver.gyroDrive(0.4d, 20d, 270d, 2d, colorDetector);
         }
     }
 }
