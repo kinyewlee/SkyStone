@@ -14,7 +14,7 @@ public class GamePadHelper {
         this.gamepad = gamepad;
         driveTime = new ElapsedTime();
         robot = aztecRobot;
-        robot.modifyHook(false);
+        robot.modifyHook();
         robot.openClaw();
     }
 
@@ -96,7 +96,11 @@ public class GamePadHelper {
         if (gamepad.x) {
             if (xPressed == false) {
                 xPressed = true;
-                robot.modifyHook(gamepad.right_bumper);
+                if (gamepad.right_bumper) {
+                    robot.modifyHookFull();
+                } else {
+                    robot.modifyHook();
+                }
             }
         } else {
             xPressed = false;
@@ -111,6 +115,15 @@ public class GamePadHelper {
             }
         } else {
             yPressed = false;
+        }
+
+        if (gamepad.a) {
+            if (!aPressed) {
+                aPressed = true;
+                robot.servoHook.setPosition(0.62d);
+            }
+        } else {
+            aPressed = false;
         }
     }
 

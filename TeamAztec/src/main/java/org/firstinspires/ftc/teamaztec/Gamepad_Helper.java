@@ -8,7 +8,6 @@ public class Gamepad_Helper {
     Gamepad gamepad;
     Hardware_Aztec robot;
     ElapsedTime runtime;
-
     private boolean xPressed = false, yPressed = false, aPressed = false, bPressed = false;
 
     Gamepad_Helper(Gamepad gamepad, Hardware_Aztec robot) {
@@ -72,6 +71,32 @@ public class Gamepad_Helper {
     }
 
     void processXYAB() {
+        if (gamepad.b) {
+            if (bPressed == false) {
+                bPressed = true;
+                robot.openClaw();
+            }
+        } else {
+            bPressed = false;
+        }
 
+        if (gamepad.y) {
+            if (yPressed != true) {
+                yPressed = true;
+                robot.turnClaw();
+            }
+        } else {
+            yPressed = false;
+        }
+    }
+
+    public void processDpad() {
+        if (gamepad.dpad_up) {
+            robot.servoWinch.setPosition(1d);
+        } else if (gamepad.dpad_down) {
+            robot.servoWinch.setPosition(0d);
+        } else {
+            robot.servoWinch.setPosition(0.5d);
+        }
     }
 }

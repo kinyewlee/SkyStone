@@ -46,8 +46,8 @@ class AztecRobot {
             (WHEEL_DIAMETER_INCHES * 3.14159265359d);
     static final double ARM_MAX = 2.98d;
     static final double ARM_MIN = 0.38d;
-    static final int WINCH_MAX = 5000;
-    static final double WINCH_SPEED = 0.8d;
+    static final int WINCH_MAX = 4000;
+    static final double WINCH_SPEED = 1d;
 
     boolean hookDown;
     boolean turnClaw = false;
@@ -87,6 +87,7 @@ class AztecRobot {
         motorWinch.setDirection(DcMotorSimple.Direction.REVERSE);
         motorWinch.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorWinch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorWinch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         setDrivePower(0, 0, 0, 0);
 
@@ -250,10 +251,15 @@ class AztecRobot {
         motorWinch.setPower(0d);
     }
 
-    void modifyHook(Boolean fullToggle) {
+    void modifyHook() {
         hookDown = !hookDown;
-        double min = fullToggle ? 0d : 0.55d;
-        double hookPosition = hookDown ? min : 1d;
+        double hookPosition = hookDown ? 0.55d : 1d;
+        servoHook.setPosition(hookPosition);
+    }
+
+    void modifyHookFull() {
+        hookDown = !hookDown;
+        double hookPosition = hookDown ? 0d : 1d;
         servoHook.setPosition(hookPosition);
     }
 

@@ -53,7 +53,7 @@ public class Autonomous_Skystone_Blue_Foundation extends LinearOpMode {
             robotDriver.gyroDrive(0.9d, -16d, 90d, 2d, null);
 
             //detach foundation
-            robotDriver.setHook(HookPosition.UP);
+            robotDriver.setHook(HookPosition.MIDDLE);
             sleep(200L);
 
             //move under skybridge

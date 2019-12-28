@@ -16,7 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class Hardware_Aztec {
     DcMotor motorFL, motorFR, motorRL, motorRR;
-    Servo servoArm;
+    Servo servoArm, servoWinch, servoHand, servoWrist;
     BNO055IMU imu;
 
     static final double ARM_MAX = 2.48d;
@@ -42,6 +42,9 @@ public class Hardware_Aztec {
         motorRR.setDirection(DcMotorSimple.Direction.REVERSE);
 
         servoArm = hardwareMap.servo.get("servo_arm");
+        servoWinch = hardwareMap.servo.get("servo_winch");
+        servoHand= hardwareMap.servo.get("servo_hand");
+        servoWrist= hardwareMap.servo.get("servo_wrist");
 
         // Set up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
@@ -75,5 +78,17 @@ public class Hardware_Aztec {
     double getHeading() {
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         return (double) AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle);
+    }
+
+    void openClaw() {
+        openClaw = !openClaw;
+        double clawPosition = openClaw ? 0d : 0.55d;
+        servoHand.setPosition(clawPosition);
+    }
+
+    void turnClaw() {
+        turnClaw = !turnClaw;
+        double wristPosition = turnClaw ? 1d : 0d;
+        servoWrist.setPosition(wristPosition);
     }
 }

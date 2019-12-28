@@ -38,6 +38,7 @@ public class Gamepad_Aztec extends LinearOpMode {
             gamepadHelper1.processLeftJoystick();
             gamepadHelper1.processLeftTrigger();
             gamepadHelper1.processXYAB();
+            gamepadHelper1.processDpad();
 
             gamepadHelper2.processLeftJoystick();
             gamepadHelper2.processLeftTrigger();

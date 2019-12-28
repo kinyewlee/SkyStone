@@ -51,7 +51,7 @@ import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name = "GamePad", group = "Linear Opmode")
 //Disabled
-public class PushbotTeleopPOV_Linear extends LinearOpMode {
+public class GamePad_Teleop extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -79,7 +79,7 @@ public class PushbotTeleopPOV_Linear extends LinearOpMode {
             gamePadHelper1.processXYAB();
 
             gamePadHelper2.processJoystick();
-            gamePadHelper2.processXYAB();
+            //gamePadHelper2.processXYAB();
 
             double powerArm = 0;
             if (gamepad1.left_trigger > 0d) { //Arm going up
@@ -91,6 +91,11 @@ public class PushbotTeleopPOV_Linear extends LinearOpMode {
             } else if (gamepad2.right_trigger > 0d) { //Arm going down
                 powerArm = -Range.clip(gamepad2.right_trigger, 0d, 1d);
             }
+
+            if (gamepad1.left_bumper || gamepad1.right_bumper) {
+                powerArm *= 0.4d;
+            }
+
             robot.setArmPower(powerArm);
 
             if (gamepad1.dpad_up || gamepad2.dpad_up) {
