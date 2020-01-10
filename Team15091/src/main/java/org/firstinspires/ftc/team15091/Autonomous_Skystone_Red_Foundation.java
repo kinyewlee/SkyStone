@@ -13,7 +13,7 @@ public class Autonomous_Skystone_Red_Foundation extends LinearOpMode {
         robot.resetDrive();
 
         RobotDriver robotDriver = new RobotDriver(robot, this);
-        DistanceDetector distanceDetector = new DistanceDetector(robot.sensorRange, 16d, 90d);
+        DistanceDetector distanceDetector = new DistanceDetector(robot.sensorRange, 17d, 90d);
         ColorDetector colorDetector = new ColorDetector(robot.sensorColor);
         telemetry.addData(">", "Press Play to start op mode");
         Telemetry.Item headingItem = telemetry.addData("Heading: ", "%.4f", robot.getHeading());
@@ -53,7 +53,7 @@ public class Autonomous_Skystone_Red_Foundation extends LinearOpMode {
             sleep(200L);
 
             //move under skybridge
-            robotDriver.gyroSlide(0.9d, 25d, 270d, 3d, null);
+            robotDriver.gyroSlide(0.9d, 35d, 270d, 4d, null);
 
             //if another robot blocking under skybridge stop
             boolean stepFinish = robotDriver.gyroDrive(0.4d, 36d, 270d, 4d, distanceDetector);

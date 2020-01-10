@@ -12,7 +12,7 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
         robot.resetDrive();
 
         final RobotDriver robotDriver = new RobotDriver(robot, this);
-        final SkystoneDetector skystoneDetector = new SkystoneDetector(this, 180L, 550L);
+        final SkystoneDetector skystoneDetector = new SkystoneDetector(this, 187L, 550L);
         final DistanceDetector distanceDetector = new DistanceDetector(robot.sensorRange, 29.3d, 100d);
         final ColorDetector colorDetector = new ColorDetector(robot.sensorColor);
         TouchDetector touchDetector = new TouchDetector(robot.digitalLeft);
@@ -64,7 +64,7 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
             //find first skystone from 1 to 3
             for (int i = 0; i < 3; i++) {
                 skystoneDetector.reset();
-                robotDriver.gyroSlide(0.6d, i == 0 ? 16d : 12.2d, 0d, 1.6d, null);
+                robotDriver.gyroSlide(0.6d, i == 0 ? 16d : 11.7d, 0d, 1.6d, null);
                 robotDriver.gyroTurn(0.7d, 0d, 0.5d);
                 for (int j = 0; j < 10; j++) {
                     if (skystoneDetector.objectDetected()) {
@@ -98,7 +98,7 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
             robotDriver.gyroTurn(0.85d, 270d, 1.4d);
 
             //deliver first skystone under skybridge
-            double distanceToSkybridge = 42.7d + ((firstSkystoneLocation) * 8.9d);
+            double distanceToSkybridge = 43d + ((firstSkystoneLocation) * 8.9d);
             robotDriver.gyroDrive(1d, distanceToSkybridge, 270d, 3.8d, null);
 
             //release skystone
@@ -108,7 +108,6 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
 
             //go back to look for 2nd skystone
             robotDriver.gyroDrive(1d, -distanceToSkybridge, 270d, 3.6d, null);
-
 
             //get ready to pick up
             robotDriver.setClaw(ClawPosition.FRONT);
@@ -123,7 +122,6 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
 
             //if the first skytone is on position #3, move directly to the end
             if (firstSkystoneLocation == 2) {
-
                 robotDriver.setArmAngle(0.5d, 1d);
 
                 skystoneDetector.reset();
@@ -165,23 +163,24 @@ public class Autonomous_Skystone_Red extends LinearOpMode {
             robotDriver.setArmAngle(0.4d, 2d);
             sleep(1000L);
             robotDriver.setClaw(ClawPosition.CLOSED);
-            sleep(900L);
+            sleep(750L);
 
             //move arm back
             new Thread() {
                 public void run() {
-                    robotDriver.moveArm(0.9d, 1d);
+                    robotDriver.moveArm(0.9d, 1.2d);
                     robotDriver.moveArm(0.6d, 1d);
                 }
             }.start();
+            sleep(100L);
 
             //deliver 2nd skystone
             robotDriver.gyroTurn(1d, 300d, 0.6d);
 
-            distanceToSkybridge = 57.3d + ((secondSkystoneLocation) * 8.95d);
+            distanceToSkybridge = 57.8d + ((secondSkystoneLocation) * 8.96d);
             robot.setDriveZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             double skybrigdeAngle = secondSkystoneLocation == 4 ? 267d : 269d;
-            robotDriver.gyroDrive(1d, distanceToSkybridge, skybrigdeAngle, 6d, null);
+            robotDriver.gyroDrive(1d, distanceToSkybridge, skybrigdeAngle, 6.1d, null);
 
             robotDriver.setClaw(ClawPosition.OPENED);
             robotDriver.setArmAngle(0.5d, 1d);
