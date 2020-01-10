@@ -31,14 +31,15 @@ public class GamePadHelper {
             stickY -= gamepad.right_stick_y;
         }
 
-        double drive = Range.scale(stickY, -1d, 1d, -0.9d, 0.9d);
+        //double drive = Range.scale(stickY, -1d, 1d, -0.9d, 0.9d);
+        double drive = stickY;
         double turn = gamepad.left_stick_x;
         double side = gamepad.right_stick_x;
 
-        powerFL = Range.clip(drive + turn + side, -1.0, 1.0);
-        powerRL = Range.clip(drive + turn - side, -1.0, 1.0);
-        powerFR = Range.clip(drive - turn - side, -1.0, 1.0);
-        powerRR = Range.clip(drive - turn + side, -1.0, 1.0);
+        powerFL = Range.clip(drive + turn + side, -1.0d, 1.0d);
+        powerRL = Range.clip(drive + turn - side, -1.0d, 1.0d);
+        powerFR = Range.clip(drive - turn - side, -1.0d, 1.0d);
+        powerRR = Range.clip(drive - turn + side, -1.0d, 1.0d);
 
         //if left bumper press, slow down movement
         if (gamepad.left_bumper) {
@@ -47,6 +48,11 @@ public class GamePadHelper {
             powerFR *= 0.6d;
             powerRR *= 0.6d;
         }
+
+        powerFL = Math.signum(powerFL) * Math.pow(powerFL, 2d);
+        powerRL = Math.signum(powerRL) * Math.pow(powerRL, 2d);
+        powerFR = Math.signum(powerFR) * Math.pow(powerFR, 2d);
+        powerRR = Math.signum(powerRR) * Math.pow(powerRR, 2d);
 
         // Send calculated power to wheels
         robot.setDrivePower(powerFL, powerFR, powerRL, powerRR);

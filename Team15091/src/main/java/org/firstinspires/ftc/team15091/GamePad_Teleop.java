@@ -83,9 +83,9 @@ public class GamePad_Teleop extends LinearOpMode {
 
             double powerArm = 0;
             if (gamepad1.left_trigger > 0d) { //Arm going up
-                powerArm = Range.clip(gamepad1.left_trigger, 0d, 1d);
+                powerArm = Range.clip(Math.pow(gamepad1.left_trigger, 2), 0d, 1d);
             } else if (gamepad1.right_trigger > 0d) { //Arm going down
-                powerArm = -Range.clip(gamepad1.right_trigger, 0d, 1d);
+                powerArm = -Range.clip(Math.pow(gamepad1.right_trigger, 2), 0d, 1d);
             } else if (gamepad2.left_trigger > 0d) { //Arm going up
                 powerArm = Range.clip(gamepad2.left_trigger, 0d, 1d);
             } else if (gamepad2.right_trigger > 0d) { //Arm going down
