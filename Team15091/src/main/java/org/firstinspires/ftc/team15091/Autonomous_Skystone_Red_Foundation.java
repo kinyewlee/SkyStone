@@ -31,7 +31,8 @@ public class Autonomous_Skystone_Red_Foundation extends LinearOpMode {
 
         if (opModeIsActive()) {
             robotDriver.setHook(HookPosition.MIDDLE);
-            robotDriver.setArmAngle(2.95d, 1d);
+            robotDriver.holdArm();
+            //robotDriver.setArmAngle(2.94d, 1d);
 
             //move to foundation
             robotDriver.gyroDrive(0.9d, -24d, 0d, 2d, null);
@@ -53,7 +54,7 @@ public class Autonomous_Skystone_Red_Foundation extends LinearOpMode {
             sleep(200L);
 
             //move under skybridge
-            robotDriver.gyroSlide(0.9d, 35d, 270d, 4d, null);
+            robotDriver.gyroSlide(0.9d, 34.4d, 270d, 4d, null);
 
             //if another robot blocking under skybridge stop
             boolean stepFinish = robotDriver.gyroDrive(0.4d, 36d, 270d, 4d, distanceDetector);

@@ -27,6 +27,10 @@ public class RobotDriver {
         this.opMode = opMode;
     }
 
+    public void holdArm() {
+        robot.motorArm.setPower(0d);
+    }
+
     public final void setHook(HookPosition hookPosition) {
         switch (hookPosition) {
             case UP:

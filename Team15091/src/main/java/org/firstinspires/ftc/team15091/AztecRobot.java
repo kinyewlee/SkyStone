@@ -51,7 +51,7 @@ class AztecRobot {
 
     boolean hookDown;
     boolean turnClaw = false;
-    boolean openClaw;
+    boolean openClaw = true;
     private int beepSoundID;
 
     AztecRobot(HardwareMap ahwMap)
@@ -150,7 +150,7 @@ class AztecRobot {
      * @param powerRL rear left
      * @param powerRR rear right
      */
-    public void setDrivePower(double powerFL, double powerFR, double powerRL, double powerRR) {
+    void setDrivePower(double powerFL, double powerFR, double powerRL, double powerRR) {
         motorFL.setPower(powerFL);
         motorRR.setPower(powerRR);
         motorRL.setPower(powerRL);
@@ -191,7 +191,7 @@ class AztecRobot {
         setDriveZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    public void setDriveZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
+    void setDriveZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
         motorFL.setZeroPowerBehavior(zeroPowerBehavior);
         motorFR.setZeroPowerBehavior(zeroPowerBehavior);
         motorRL.setZeroPowerBehavior(zeroPowerBehavior);
