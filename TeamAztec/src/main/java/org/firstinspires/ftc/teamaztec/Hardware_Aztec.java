@@ -36,9 +36,9 @@ public class Hardware_Aztec {
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        motorFL.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFL.setDirection(DcMotorSimple.Direction.FORWARD);
         motorRL.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorFR.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorFR.setDirection(DcMotorSimple.Direction.REVERSE);
         motorRR.setDirection(DcMotorSimple.Direction.REVERSE);
 
         servoArm = hardwareMap.servo.get("servo_arm");

@@ -154,10 +154,11 @@ public class Autonomous_Skystone_Blue1 extends LinearOpMode {
             robotDriver.setClaw(ClawPosition.CLOSED);
             sleep(900L);
 
+            final double armLiftAngle = firstSkystoneLocation == 2 ? 1d : 0.85d;
             //move arm back
             new Thread(() -> {
-                robotDriver.moveArm(0.8d, 1d);
-                robotDriver.moveArm(0.55d, 1d);
+                robotDriver.moveArm(armLiftAngle, 1.1d);
+                robotDriver.moveArm(0.6d, 1d);
             }).start();
             robotDriver.gyroTurn(1d, 70d, 0.6d);
 

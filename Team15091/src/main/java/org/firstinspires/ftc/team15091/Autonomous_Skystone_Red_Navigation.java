@@ -1,22 +1,23 @@
 package org.firstinspires.ftc.team15091;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-@Autonomous(name = "Skystone: Red Foundation", group = "Skystone")
-@Disabled
-public class Autonomous_Skystone_Red_Foundation extends LinearOpMode {
+@Autonomous(name = "Skystone: Red Navigation", group = "Skystone")
+public class Autonomous_Skystone_Red_Navigation extends LinearOpMode {
     @Override
     public void runOpMode() {
         AztecRobot robot = new AztecRobot(hardwareMap);
         robot.resetDrive();
 
         RobotDriver robotDriver = new RobotDriver(robot, this);
-        DistanceDetector distanceDetector = new DistanceDetector(robot.sensorRange, 17d, 90d);
+        DistanceDetector distanceDetector = new DistanceDetector(robot.sensorRange, 18d, 90d);
         ColorDetector colorDetector = new ColorDetector(robot.sensorColor);
+        TouchDetector touchDetector = new TouchDetector(robot.digitalLeft);
+        ColorDistanceDetector colorDistanceDetector = new ColorDistanceDetector(colorDetector, distanceDetector);
+
         telemetry.addData(">", "Press Play to start op mode");
         Telemetry.Item headingItem = telemetry.addData("Heading: ", "%.4f", robot.getHeading());
         Telemetry.Item detectorItem = telemetry.addData("Detected: ", distanceDetector.objectDetected());
@@ -35,32 +36,16 @@ public class Autonomous_Skystone_Red_Foundation extends LinearOpMode {
             robotDriver.setHook(HookPosition.MIDDLE);
             robotDriver.holdArm();
             //robotDriver.setArmAngle(2.94d, 1d);
-
-            //move to foundation
-            robotDriver.gyroDrive(0.9d, -24d, 0d, 2d, null);
-            robotDriver.gyroSlide(0.9d, 22d, 0d, 2d, null);
-            robotDriver.gyroDrive(0.2d, -19d, 0d, 3d, null);
-
-            //attach to foundation
-            robotDriver.setHook(HookPosition.DOWN);
-            sleep(2000L);
-
-            //move foundation to building zone
-            robotDriver.gyroDrive(0.9d, 18d, 0d, 2d, null);
-            robotDriver.gyroSlide(0.9d, -24d, 0d, 2d, null);
-            robotDriver.gyroTurn(0.9d, 270d, 2d);
-            robotDriver.gyroDrive(0.9d, -16d, 270d, 2d, null);
-
-            //detach foundation
-            robotDriver.setHook(HookPosition.MIDDLE);
-            sleep(200L);
+            sleep(15000L);
 
             //move under skybridge
-            robotDriver.gyroSlide(0.9d, 34.4d, 270d, 4d, null);
+            robotDriver.gyroDrive(0.2d, -3d, 0d, 2d, null);
+            robotDriver.gyroTurn(0.3d, 285d, 5d);
+            sleep(2000L);
 
             //if another robot blocking under skybridge stop
-            boolean stepFinish = robotDriver.gyroDrive(0.4d, 36d, 270d, 4d, distanceDetector);
-            if (!stepFinish) {
+            boolean stepFinish = robotDriver.gyroDrive(0.4d, 24d, 270d, 4d, colorDistanceDetector);
+            if (!stepFinish && !colorDetector.objectDetected()) {
                 robotDriver.gyroSlide(0.4d, -30d, 270d, 3d, null);
             }
 
