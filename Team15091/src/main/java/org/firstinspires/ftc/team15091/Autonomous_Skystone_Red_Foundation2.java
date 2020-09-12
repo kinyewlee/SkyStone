@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-@Autonomous(name = "Skystone: Red Foundation", group = "Skystone")
+@Autonomous(name = "Skystone: Red Foundation 2", group = "Skystone")
 public class Autonomous_Skystone_Red_Foundation2 extends LinearOpMode {
     @Override
     public void runOpMode() {

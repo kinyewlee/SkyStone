@@ -13,8 +13,9 @@ public class DistanceDetector implements IObjectDetector {
 
     /**
      * Set distance detector
+     *
      * @param sensorToUse
-     * @param threshold in CM
+     * @param threshold   in CM
      */
     public DistanceDetector(DistanceSensor sensorToUse, double threshold, double delay) {
         sensorRange = sensorToUse;
@@ -30,8 +31,7 @@ public class DistanceDetector implements IObjectDetector {
             if (runtime.milliseconds() > 90d) {
                 detected = true;
             }
-        }
-        else {
+        } else {
             runtime.reset();
         }
         return detected;

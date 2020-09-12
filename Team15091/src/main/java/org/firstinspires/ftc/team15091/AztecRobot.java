@@ -54,8 +54,7 @@ class AztecRobot {
     boolean openClaw = true;
     private int beepSoundID;
 
-    AztecRobot(HardwareMap ahwMap)
-    {
+    AztecRobot(HardwareMap ahwMap) {
         this(ahwMap, true);
     }
 

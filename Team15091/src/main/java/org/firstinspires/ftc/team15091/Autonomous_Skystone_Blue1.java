@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Autonomous(name = "Skystone: Blue", group = "Skystone")
+@Autonomous(name = "Skystone: Blue 1", group = "Skystone")
 public class Autonomous_Skystone_Blue1 extends LinearOpMode {
     @Override
     public void runOpMode() {

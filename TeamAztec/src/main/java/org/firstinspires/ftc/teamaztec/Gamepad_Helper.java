@@ -28,15 +28,15 @@ public class Gamepad_Helper {
             stickY -= gamepad.right_stick_y;
         }
 
-        double drive = Range.scale(stickY, -1d, 1d, -0.9d, 0.9d);
+        double drive = Range.scale(stickY, -1d, 1d, -1d, 1d);
         double turn = gamepad.left_stick_x;
         double side = gamepad.right_stick_x;
 
 
         powerFL = Range.clip(drive + turn + side, -1.0, 1.0);
         powerRL = Range.clip(drive + turn - side, -1.0, 1.0);
-        powerFR = Range.clip(drive - turn + side, -1.0, 1.0);
-        powerRR = Range.clip(drive - turn - side, -1.0, 1.0);
+        powerFR = Range.clip(drive - turn - side, -1.0, 1.0);
+        powerRR = Range.clip(drive - turn + side, -1.0, 1.0);
 
         if (gamepad.left_bumper) {
             powerFL *= 0.6d;

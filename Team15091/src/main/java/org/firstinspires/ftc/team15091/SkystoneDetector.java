@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.team15091;
 
-import android.util.Range;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.vuforia.HINT;
 import com.vuforia.Vuforia;
@@ -36,21 +34,16 @@ public class SkystoneDetector implements IObjectDetector {
     float thresholdMin = 180L, thresholdMax = 550L;
 
     public SkystoneDetector(LinearOpMode opMode, float thresholdMin, float thresholdMax) {
-        this(opMode, 0.7d, thresholdMin, thresholdMax);
+        this(opMode, 0.7f, thresholdMin, thresholdMax);
     }
 
-    public SkystoneDetector(LinearOpMode opMode, double confidence, float thresholdMin, float thresholdMax) {
+    public SkystoneDetector(LinearOpMode opMode, float confidence, float thresholdMin, float thresholdMax) {
         this.opMode = opMode;
         this.thresholdMin = thresholdMin;
         this.thresholdMax = thresholdMax;
 
         initVuforia();
-
-        if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
-            initTfod(confidence);
-        } else {
-            opMode.telemetry.addData("Sorry!", "This device is not compatible with TFOD");
-        }
+        initTfod(confidence);
 
         /**
          * Activate TensorFlow Object Detection before we wait for the start command.
@@ -125,11 +118,11 @@ public class SkystoneDetector implements IObjectDetector {
     /**
      * Initialize the TensorFlow Object Detection engine.
      */
-    private void initTfod(double confidence) {
+    private void initTfod(float confidence) {
         int tfodMonitorViewId = opMode.hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", opMode.hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minimumConfidence = confidence;
+        tfodParameters.minResultConfidence = confidence;
         //tfodParameters.useObjectTracker = false;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);

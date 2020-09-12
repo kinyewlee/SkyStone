@@ -16,7 +16,7 @@ public class Gamepad_Aztec extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        Hardware_Aztec robot = new Hardware_Aztec(hardwareMap);
+        final Hardware_Aztec robot = new Hardware_Aztec(hardwareMap);
         Gamepad_Helper gamepadHelper1 = new Gamepad_Helper(gamepad1, robot);
         Gamepad_Helper gamepadHelper2 = new Gamepad_Helper(gamepad2, robot);
 

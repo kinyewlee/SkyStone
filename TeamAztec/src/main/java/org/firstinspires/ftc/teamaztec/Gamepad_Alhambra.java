@@ -52,7 +52,7 @@ import java.util.concurrent.TimeUnit;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name = "Gamepad", group = "Linear Opmode")
+@TeleOp(name = "Gamepad Alhambra", group = "Linear Opmode")
 @Disabled
 public class Gamepad_Alhambra extends Autonomous_Alhambra {
 
